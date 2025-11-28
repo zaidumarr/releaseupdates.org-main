@@ -249,6 +249,14 @@ export default function App() {
     [searchQuery, activeFilter],
   );
 
+  const trendingTools = useMemo(
+    () =>
+      [...TOOLS_CATALOG]
+        .sort((a, b) => (b.tags?.length || 0) - (a.tags?.length || 0))
+        .slice(0, 5),
+    [],
+  );
+
   const openDetail = (item, type) => {
     setSelectedItem(item);
     setSelectedType(type);
@@ -473,6 +481,46 @@ export default function App() {
 
           {!loading && activeView === 'feed' && (
             <>
+              <div className="mb-6 bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <div>
+                    <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">Top Trending</p>
+                    <p className="text-sm text-zinc-400">Most-mentioned tools right now</p>
+                  </div>
+                  <span className="px-2 py-1 text-[11px] rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    Auto-curated
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+                  {trendingTools.map((tool, index) => (
+                    <button
+                      key={tool.id}
+                      onClick={() => openDetail(tool, 'tool')}
+                      className="group text-left bg-zinc-950/60 border border-zinc-800 hover:border-indigo-500/30 hover:bg-zinc-900/60 rounded-lg p-3 transition-all"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-semibold text-zinc-500">#{index + 1}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                          {tool.category}
+                        </span>
+                      </div>
+                      <p className="text-sm font-semibold text-white group-hover:text-indigo-100">{tool.name}</p>
+                      <p className="text-xs text-zinc-500 mb-2">{tool.vendor}</p>
+                      <div className="flex flex-wrap gap-1">
+                        {tool.tags?.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-400 border border-zinc-800"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {filteredReleases.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20">
                   <p className="text-zinc-500">No updates found matching your filters.</p>
