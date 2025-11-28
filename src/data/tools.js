@@ -27,4 +27,10 @@ export const TOOLS_CATALOG = [
   { id: 't26', name: 'Make', vendor: 'Make', category: 'automation', description: 'Visual workflow automation platform with deep AI integration capabilities.', tags: ['Visual', 'Backend', 'Complex'] },
   { id: 't27', name: 'DataRobot', vendor: 'DataRobot', category: 'data', description: 'Unified AI platform for building, deploying, and monitoring ML models.', tags: ['MLOps', 'Enterprise', 'Analytics'] },
   { id: 't28', name: 'Snowflake Cortex', vendor: 'Snowflake', category: 'data', description: 'Managed AI service bringing LLMs directly to your data in Snowflake.', tags: ['SQL', 'Big Data', 'Cloud'] },
+  { id: 't29', name: 'Mistral AI', vendor: 'Mistral', category: 'chatbots', description: 'Lightweight, high-quality open models (Mixtral, Mistral Large) with strong coding and reasoning.', tags: ['Open Models', 'Reasoning', 'Coding'] },
+  { id: 't30', name: 'Adobe Firefly', vendor: 'Adobe', category: 'image', description: 'Generative imaging and style transfer built into Creative Cloud for production-grade assets.', tags: ['Design', 'Brand Safe', 'Photoshop'] },
+  { id: 't31', name: 'Figma AI', vendor: 'Figma', category: 'productivity', description: 'AI for layout, content generation, and asset variations directly inside Figma.', tags: ['Design', 'Layout', 'Components'] },
+  { id: 't32', name: 'Jasper', vendor: 'Jasper', category: 'productivity', description: 'Enterprise AI writing with brand voice controls and team collaboration.', tags: ['Marketing', 'Copy', 'Brand'] },
+  { id: 't33', name: 'Pinecone', vendor: 'Pinecone', category: 'data', description: 'Fully managed vector database for retrieval-augmented generation at scale.', tags: ['Vector', 'RAG', 'Search'] },
+  { id: 't34', name: 'LangChain', vendor: 'LangChain', category: 'automation', description: 'Orchestration framework for agents, tools, and retrieval pipelines.', tags: ['Framework', 'Agents', 'Pipelines'] },
 ];

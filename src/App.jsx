@@ -286,8 +286,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-zinc-300 font-sans selection:bg-indigo-500/30 flex flex-col">
-      <header className="fixed top-0 left-0 right-0 h-16 bg-black/80 backdrop-blur-md border-b border-zinc-800 z-40 flex items-center justify-between px-4 md:px-6">
+    <div className="relative min-h-screen bg-gradient-to-br from-[#050816] via-[#0b1024] to-[#120920] text-zinc-300 font-sans selection:bg-indigo-500/30 flex flex-col overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 -left-32 h-80 w-80 rounded-full bg-indigo-600/20 blur-[120px]" />
+        <div className="absolute top-10 right-10 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-[120px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-96 w-[32rem] rounded-full bg-cyan-500/10 blur-[140px]" />
+      </div>
+
+      <header className="fixed top-0 left-0 right-0 h-16 bg-black/60 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4 md:px-6 shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
         <div className="flex items-center gap-3">
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 hover:bg-zinc-800 rounded">
             <Menu className="w-5 h-5" />
