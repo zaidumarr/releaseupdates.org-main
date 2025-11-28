@@ -4,6 +4,7 @@ import {
   ExternalLink,
   History,
   Loader2,
+  MonitorSmartphone,
   RefreshCw,
   X,
 } from 'lucide-react';
@@ -61,6 +62,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
                 <div className="flex items-center gap-2 text-zinc-400 mt-1 text-sm">
                   <span>{isTool ? item.vendor : `v${item.version}`}</span>
                   {!isTool && <span>• {new Date(item.date).toLocaleDateString()}</span>}
+                  {isTool && item.version && <span className="text-indigo-300">• {item.version}</span>}
                 </div>
               </div>
             </div>
@@ -79,6 +81,11 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
                 {tag}
               </span>
             ))}
+            {isTool && item.pricing && (
+              <span className="px-2 py-0.5 text-xs font-medium text-emerald-200 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+                {item.pricing}
+              </span>
+            )}
           </div>
 
           <div className="prose prose-invert max-w-none mb-8">
@@ -100,18 +107,43 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
             )}
 
             <div className="mt-6 p-4 bg-zinc-900/50 rounded-lg border border-zinc-800/60">
-              <h4 className="text-sm font-medium text-zinc-300 mb-2 flex items-center gap-2">
-                <Cpu className="w-4 h-4 text-indigo-400" />
-                {isTool ? 'Research Significance' : 'Release Impact Analysis'}
-              </h4>
-              <p className="text-sm text-zinc-500 leading-relaxed">
-                {isTool
-                  ? `${item.name} is a key player in the ${CATEGORIES[item.category]?.label || 'AI'} space. Widely cited in 2025 research for its ${
-                      item.tags?.[0]
-                    } capabilities.`
+                <h4 className="text-sm font-medium text-zinc-300 mb-2 flex items-center gap-2">
+                  <Cpu className="w-4 h-4 text-indigo-400" />
+                  {isTool ? 'Research Significance' : 'Release Impact Analysis'}
+                </h4>
+                <p className="text-sm text-zinc-500 leading-relaxed">
+                  {isTool
+                    ? `${item.name} is a key player in the ${CATEGORIES[item.category]?.label || 'AI'} space. Widely cited in 2025 research for its ${
+                        item.tags?.[0]
+                      } capabilities.`
                   : 'This update significantly impacts workflows dependent on previous API versions. Recommended for immediate review by DevOps and Engineering teams.'}
-              </p>
-            </div>
+                </p>
+                {isTool && (
+                  <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-300">
+                    <span className="px-2 py-1 rounded bg-zinc-800/70 border border-zinc-700/60 flex items-center gap-1">
+                      <MonitorSmartphone className="w-3 h-3 text-indigo-300" /> Platforms:
+                    </span>
+                    {(item.platforms || []).map((platform) => (
+                      <span
+                        key={platform}
+                        className="px-2 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400"
+                      >
+                        {platform}
+                      </span>
+                    ))}
+                    {item.pricing && (
+                      <span className="px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-200">
+                        {item.pricing}
+                      </span>
+                    )}
+                    {item.version && (
+                      <span className="px-2 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-200">
+                        {item.version}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
 
             {isTool && (
               <div className="mt-10 border-t border-zinc-800 pt-6">

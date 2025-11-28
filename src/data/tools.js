@@ -1,4 +1,4 @@
-export const TOOLS_CATALOG = [
+const BASE_TOOLS = [
   { id: 't1', name: 'ChatGPT', vendor: 'OpenAI', category: 'chatbots', description: 'The industry-standard LLM assistant. Supports GPT-5.1, o1, code execution, and canvas.', tags: ['LLM', 'Multi-modal', 'Agents'] },
   { id: 't2', name: 'Claude', vendor: 'Anthropic', category: 'chatbots', description: 'Known for high safety standards, large context windows (Opus/Sonnet), and "Artifacts" UI.', tags: ['LLM', 'Enterprise', 'Reasoning'] },
   { id: 't3', name: 'Gemini', vendor: 'Google', category: 'chatbots', description: 'Deeply integrated Google ecosystem AI. Multimodal native (text, image, code, voice).', tags: ['Google', 'Multimodal', 'Voice'] },
@@ -34,3 +34,14 @@ export const TOOLS_CATALOG = [
   { id: 't33', name: 'Pinecone', vendor: 'Pinecone', category: 'data', description: 'Fully managed vector database for retrieval-augmented generation at scale.', tags: ['Vector', 'RAG', 'Search'] },
   { id: 't34', name: 'LangChain', vendor: 'LangChain', category: 'automation', description: 'Orchestration framework for agents, tools, and retrieval pipelines.', tags: ['Framework', 'Agents', 'Pipelines'] },
 ];
+
+const DEFAULT_PLATFORMS = ['Web', 'macOS', 'Windows', 'iOS', 'Android'];
+const DEFAULT_PRICING = 'Tiered plans';
+const DEFAULT_VERSION = 'Latest';
+
+export const TOOLS_CATALOG = BASE_TOOLS.map((tool) => ({
+  version: DEFAULT_VERSION,
+  pricing: DEFAULT_PRICING,
+  platforms: DEFAULT_PLATFORMS,
+  ...tool,
+}));
