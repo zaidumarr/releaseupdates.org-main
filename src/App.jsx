@@ -560,13 +560,27 @@ export default function App() {
     [searchQuery, activeFilter],
   );
 
-  const trendingTools = useMemo(
-    () =>
-      [...TOOLS_CATALOG]
-        .sort((a, b) => (b.tags?.length || 0) - (a.tags?.length || 0))
-        .slice(0, 5),
-    [],
-  );
+  const trendingTools = useMemo(() => {
+    const vendorBoost = new Set(['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit']);
+    const categoryBoost = {
+      coding: 3,
+      automation: 2,
+      data: 2,
+      chatbots: 1,
+    };
+    return [...TOOLS_CATALOG]
+      .map((tool) => {
+        const base = (tool.tags?.length || 0) * 1.5;
+        const vBoost = vendorBoost.has(tool.vendor) ? 3 : 0;
+        const cBoost = categoryBoost[tool.category] || 0;
+        return { ...tool, _score: base + vBoost + cBoost };
+      })
+      .sort((a, b) => {
+        if (b._score === a._score) return b.name.localeCompare(a.name);
+        return b._score - a._score;
+      })
+      .slice(0, 8);
+  }, []);
 
   const openDetail = (item, type) => {
     setSelectedItem(item);
@@ -837,13 +851,31 @@ export default function App() {
                       </div>
                       <p className="text-sm font-semibold text-white group-hover:text-indigo-100">{tool.name}</p>
                       <p className="text-xs text-zinc-500 mb-2">{tool.vendor}</p>
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
+                          {tool.version || 'Latest'}
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
+                          {tool.pricing || 'Pricing'}
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-2">
                         {tool.tags?.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
                             className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-400 border border-zinc-800"
                           >
                             {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80">
+                        {(tool.platforms || []).slice(0, 3).map((platform) => (
+                          <span
+                            key={platform}
+                            className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800"
+                          >
+                            {platform}
                           </span>
                         ))}
                       </div>
