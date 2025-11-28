@@ -7,14 +7,14 @@ import {
 } from 'firebase/auth';
 import { auth } from '../services/firebase.js';
 
-export const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
+export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false, onLocalAuth }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (!isOpen || !auth) return null;
+  if (!isOpen) return null;
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -22,6 +22,16 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
     setLoading(true);
 
     try {
+      if (isLocalMode && onLocalAuth) {
+        await onLocalAuth(email, password, name);
+        onClose();
+        return;
+      }
+
+      if (!auth && !isLocalMode) {
+        throw new Error('Authentication is not available.');
+      }
+
       if (mode === 'signup') {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(userCredential.user, { displayName: name });
@@ -30,11 +40,11 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
       }
       onClose();
     } catch (authError) {
-      let message = 'Authentication failed.';
-      if (authError.code === 'auth/email-already-in-use') message = 'Email already in use.';
-      if (authError.code === 'auth/invalid-email') message = 'Invalid email address.';
-      if (authError.code === 'auth/weak-password') message = 'Password should be at least 6 characters.';
-      if (authError.code === 'auth/user-not-found' || authError.code === 'auth/wrong-password')
+      let message = isLocalMode ? 'Invalid credentials.' : 'Authentication failed.';
+      if (authError?.code === 'auth/email-already-in-use') message = 'Email already in use.';
+      if (authError?.code === 'auth/invalid-email') message = 'Invalid email address.';
+      if (authError?.code === 'auth/weak-password') message = 'Password should be at least 6 characters.';
+      if (authError?.code === 'auth/user-not-found' || authError?.code === 'auth/wrong-password')
         message = 'Invalid email or password.';
       setError(message);
     } finally {
@@ -63,7 +73,7 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === 'signup' && (
+          {!isLocalMode && mode === 'signup' && (
             <div>
               <label className="block text-xs font-medium text-zinc-400 mb-1.5">Full Name</label>
               <div className="relative">

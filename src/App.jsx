@@ -39,6 +39,12 @@ import { TOOLS_CATALOG } from './data/tools.js';
 import { appId, auth, authToken, db, isFirebaseEnabled } from './services/firebase.js';
 import { MockReleaseService } from './services/mockReleaseService.js';
 
+const LOCAL_TEST_USER = {
+  email: 'zaidtest',
+  password: 'Gujjar930$',
+  displayName: 'Zaid Test',
+};
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [releases, setReleases] = useState([]);
@@ -53,6 +59,7 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const localAuthEnabled = !isFirebaseEnabled;
 
   const seedLocalData = () => {
     setReleases(
@@ -203,11 +210,27 @@ export default function App() {
   const handleLogout = async () => {
     if (!isFirebaseEnabled) {
       setShowUserMenu(false);
+      setUser({ isAnonymous: true });
       return;
     }
     await signOut(auth);
     setShowUserMenu(false);
     await signInAnonymously(auth);
+  };
+
+  const handleLocalAuth = async (email, password) => {
+    if (email === LOCAL_TEST_USER.email && password === LOCAL_TEST_USER.password) {
+      setUser({
+        isAnonymous: false,
+        displayName: LOCAL_TEST_USER.displayName,
+        email: LOCAL_TEST_USER.email,
+        isLocal: true,
+      });
+      setIsAuthModalOpen(false);
+      setShowUserMenu(false);
+      return;
+    }
+    throw new Error('Invalid credentials');
   };
 
   const filteredReleases = useMemo(
@@ -339,7 +362,7 @@ export default function App() {
                   setAuthMode('login');
                   setIsAuthModalOpen(true);
                 }}
-                disabled={!isFirebaseEnabled}
+                disabled={!isFirebaseEnabled && !localAuthEnabled ? true : false}
                 className="text-xs font-medium text-zinc-300 hover:text-white px-3 py-1.5 hover:bg-zinc-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Log In
@@ -349,7 +372,7 @@ export default function App() {
                   setAuthMode('signup');
                   setIsAuthModalOpen(true);
                 }}
-                disabled={!isFirebaseEnabled}
+                disabled={!isFirebaseEnabled && !localAuthEnabled ? true : false}
                 className="text-xs font-medium bg-white text-black px-3 py-1.5 rounded-lg hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Sign Up
@@ -589,10 +612,12 @@ export default function App() {
       </div>
 
       <AuthModal
-        isOpen={isFirebaseEnabled && isAuthModalOpen}
+        isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
         mode={authMode}
         setMode={setAuthMode}
+        isLocalMode={localAuthEnabled}
+        onLocalAuth={handleLocalAuth}
       />
 
       {selectedItem && (
