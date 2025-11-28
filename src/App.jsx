@@ -83,6 +83,12 @@ const TRANSLATIONS = {
     allTools: 'All Tools',
     topTrending: 'Top Trending',
     mostMentioned: 'Most-mentioned tools right now',
+    autoCurated: 'Auto-curated',
+    syncingDb: 'Synchronizing database...',
+    login: 'Log In',
+    signup: 'Sign Up',
+    logout: 'Sign Out',
+    offlineDemo: 'Offline demo',
   },
   ru: {
     releaseDashboard: 'Панель релизов',
@@ -110,6 +116,12 @@ const TRANSLATIONS = {
     allTools: 'Все инструменты',
     topTrending: 'Топ тренды',
     mostMentioned: 'Самые упоминаемые сейчас',
+    autoCurated: 'Авто-подбор',
+    syncingDb: 'Синхронизация базы...',
+    login: 'Войти',
+    signup: 'Регистрация',
+    logout: 'Выйти',
+    offlineDemo: 'Оффлайн демо',
   },
   it: {
     releaseDashboard: 'Dashboard Rilasci',
@@ -137,6 +149,12 @@ const TRANSLATIONS = {
     allTools: 'Tutti gli strumenti',
     topTrending: 'Top trend',
     mostMentioned: 'Più menzionati ora',
+    autoCurated: 'Auto-curato',
+    syncingDb: 'Sincronizzazione database...',
+    login: 'Accedi',
+    signup: 'Registrati',
+    logout: 'Esci',
+    offlineDemo: 'Demo offline',
   },
   fr: {
     releaseDashboard: 'Tableau des versions',
@@ -164,6 +182,12 @@ const TRANSLATIONS = {
     allTools: 'Tous les outils',
     topTrending: 'Tendances',
     mostMentioned: 'Les plus cités',
+    autoCurated: 'Auto-sélection',
+    syncingDb: 'Synchronisation de la base...',
+    login: 'Connexion',
+    signup: 'Créer un compte',
+    logout: 'Déconnexion',
+    offlineDemo: 'Démo hors ligne',
   },
   es: {
     releaseDashboard: 'Panel de lanzamientos',
@@ -191,6 +215,12 @@ const TRANSLATIONS = {
     allTools: 'Todas las herramientas',
     topTrending: 'Tendencias',
     mostMentioned: 'Más mencionadas ahora',
+    autoCurated: 'Auto-curado',
+    syncingDb: 'Sincronizando base de datos...',
+    login: 'Iniciar sesión',
+    signup: 'Crear cuenta',
+    logout: 'Cerrar sesión',
+    offlineDemo: 'Demo sin conexión',
   },
   pt: {
     releaseDashboard: 'Painel de lançamentos',
@@ -218,6 +248,12 @@ const TRANSLATIONS = {
     allTools: 'Todas as ferramentas',
     topTrending: 'Em alta',
     mostMentioned: 'Mais mencionadas agora',
+    autoCurated: 'Auto-curado',
+    syncingDb: 'Sincronizando base...',
+    login: 'Entrar',
+    signup: 'Criar conta',
+    logout: 'Sair',
+    offlineDemo: 'Demo offline',
   },
   zh: {
     releaseDashboard: '发布看板',
@@ -245,6 +281,12 @@ const TRANSLATIONS = {
     allTools: '全部工具',
     topTrending: '热门趋势',
     mostMentioned: '当前最常提及',
+    autoCurated: '自动推荐',
+    syncingDb: '数据库同步中...',
+    login: '登录',
+    signup: '注册',
+    logout: '退出',
+    offlineDemo: '离线演示',
   },
   ja: {
     releaseDashboard: 'リリースダッシュボード',
@@ -272,6 +314,12 @@ const TRANSLATIONS = {
     allTools: 'すべてのツール',
     topTrending: 'トレンド',
     mostMentioned: '今注目',
+    autoCurated: '自動キュレーション',
+    syncingDb: 'データベース同期中...',
+    login: 'ログイン',
+    signup: 'サインアップ',
+    logout: 'ログアウト',
+    offlineDemo: 'オフラインデモ',
   },
 };
 
@@ -604,18 +652,18 @@ export default function App() {
                 <div className="absolute right-0 mt-2 w-48 bg-zinc-900 border border-zinc-800 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
                   <div className="px-4 py-3 border-b border-zinc-800">
                     <p className="text-sm font-medium text-white truncate">{user.displayName || 'User'}</p>
-                    <p className="text-xs text-zinc-500 truncate">{user.email || 'No email'}</p>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2 transition-colors"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              )}
+                <p className="text-xs text-zinc-500 truncate">{user.email || 'No email'}</p>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-zinc-800 flex items-center gap-2 transition-colors"
+              >
+                {t('logout')}
+              </button>
             </div>
-          ) : (
+          )}
+        </div>
+      ) : (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => {
@@ -625,7 +673,7 @@ export default function App() {
                 disabled={!isFirebaseEnabled && !localAuthEnabled ? true : false}
                 className="text-xs font-medium text-zinc-300 hover:text-white px-3 py-1.5 hover:bg-zinc-800 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Log In
+                {t('login')}
               </button>
               <button
                 onClick={() => {
@@ -635,11 +683,11 @@ export default function App() {
                 disabled={!isFirebaseEnabled && !localAuthEnabled ? true : false}
                 className="text-xs font-medium bg-white text-black px-3 py-1.5 rounded-lg hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign Up
+                {t('signup')}
               </button>
               {!isFirebaseEnabled && (
                 <span className="text-[11px] text-amber-400 px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                  Offline demo
+                  {t('offlineDemo')}
                 </span>
               )}
             </div>
@@ -755,10 +803,10 @@ export default function App() {
             />
           </div>
 
-          {loading && (
+              {loading && (
             <div className="flex flex-col items-center justify-center py-20">
               <RefreshCw className="w-10 h-10 text-indigo-500 animate-spin mb-4" />
-              <p className="text-zinc-500 text-sm">Synchronizing database...</p>
+              <p className="text-zinc-500 text-sm">{t('syncingDb')}</p>
             </div>
           )}
 
