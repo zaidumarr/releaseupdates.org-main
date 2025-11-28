@@ -40,7 +40,7 @@ import { appId, auth, authToken, db, isFirebaseEnabled } from './services/fireba
 import { MockReleaseService } from './services/mockReleaseService.js';
 
 const LOCAL_TEST_USER = {
-  email: 'zaidtest',
+  email: 'zaid5044@gmail.com',
   password: 'Gujjar930$',
   displayName: 'Zaid Test',
 };
