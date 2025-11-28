@@ -45,6 +45,236 @@ const LOCAL_TEST_USER = {
   displayName: 'Zaid Test',
 };
 
+const LANGUAGES = [
+  { code: 'en', label: 'English' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'fr', label: 'Français' },
+  { code: 'es', label: 'Español' },
+  { code: 'pt', label: 'Português' },
+  { code: 'zh', label: '中文' },
+  { code: 'ja', label: '日本語' },
+];
+
+const TRANSLATIONS = {
+  en: {
+    releaseDashboard: 'Release Dashboard',
+    toolsDirectory: 'AI Tools Directory',
+    releaseSubtitle: 'Track the latest software updates across your ecosystem.',
+    directorySubtitle: (count) => `Browsing ${count} verified AI research tools and platforms.`,
+    searchUpdates: 'Search updates or tools...',
+    search: 'Search...',
+    checkUpdates: 'Check Updates',
+    syncing: 'Syncing...',
+    releaseFeed: 'Release Feed',
+    toolsDir: 'Tools Directory',
+    filterFeed: 'Filter Feed',
+    categories: 'Categories',
+    aiModels: 'AI Models',
+    mobile: 'Mobile & OS',
+    proInsights: 'Pro Insights',
+    proCopy: 'Get detailed impact analysis for 240+ AI tools.',
+    upgradePlan: 'Upgrade Plan',
+    updates24h: 'Updates (24h)',
+    totalTracked: 'Total Tracked',
+    noUpdates: 'No updates found matching your filters.',
+    clearFilters: 'Clear filters',
+    noTools: 'No tools found matching your search.',
+    allTools: 'All Tools',
+    topTrending: 'Top Trending',
+    mostMentioned: 'Most-mentioned tools right now',
+  },
+  ru: {
+    releaseDashboard: 'Панель релизов',
+    toolsDirectory: 'Каталог AI инструментов',
+    releaseSubtitle: 'Отслеживайте последние обновления ПО в вашей экосистеме.',
+    directorySubtitle: (count) => `Просмотр ${count} проверенных AI инструментов и платформ.`,
+    searchUpdates: 'Поиск обновлений или инструментов...',
+    search: 'Поиск...',
+    checkUpdates: 'Проверить обновления',
+    syncing: 'Синхронизация...',
+    releaseFeed: 'Лента релизов',
+    toolsDir: 'Каталог инструментов',
+    filterFeed: 'Фильтр ленты',
+    categories: 'Категории',
+    aiModels: 'AI Модели',
+    mobile: 'Мобильные & ОС',
+    proInsights: 'Pro аналитика',
+    proCopy: 'Глубокий анализ влияния для 240+ AI инструментов.',
+    upgradePlan: 'Обновить план',
+    updates24h: 'Обновления (24ч)',
+    totalTracked: 'Всего отслеживается',
+    noUpdates: 'Нет обновлений по вашим фильтрам.',
+    clearFilters: 'Сбросить фильтры',
+    noTools: 'Нет инструментов по запросу.',
+    allTools: 'Все инструменты',
+    topTrending: 'Топ тренды',
+    mostMentioned: 'Самые упоминаемые сейчас',
+  },
+  it: {
+    releaseDashboard: 'Dashboard Rilasci',
+    toolsDirectory: 'Directory AI Tools',
+    releaseSubtitle: 'Monitora gli ultimi aggiornamenti software nel tuo ecosistema.',
+    directorySubtitle: (count) => `Stai consultando ${count} strumenti e piattaforme AI verificati.`,
+    searchUpdates: 'Cerca aggiornamenti o strumenti...',
+    search: 'Cerca...',
+    checkUpdates: 'Verifica aggiornamenti',
+    syncing: 'Sincronizzazione...',
+    releaseFeed: 'Feed Rilasci',
+    toolsDir: 'Directory Strumenti',
+    filterFeed: 'Filtra feed',
+    categories: 'Categorie',
+    aiModels: 'Modelli AI',
+    mobile: 'Mobile & OS',
+    proInsights: 'Approfondimenti Pro',
+    proCopy: 'Analisi di impatto per oltre 240 strumenti AI.',
+    upgradePlan: 'Aggiorna piano',
+    updates24h: 'Aggiornamenti (24h)',
+    totalTracked: 'Totale tracciati',
+    noUpdates: 'Nessun aggiornamento per questi filtri.',
+    clearFilters: 'Pulisci filtri',
+    noTools: 'Nessuno strumento trovato.',
+    allTools: 'Tutti gli strumenti',
+    topTrending: 'Top trend',
+    mostMentioned: 'Più menzionati ora',
+  },
+  fr: {
+    releaseDashboard: 'Tableau des versions',
+    toolsDirectory: 'Annuaire des outils IA',
+    releaseSubtitle: 'Suivez les dernières mises à jour logicielles de votre écosystème.',
+    directorySubtitle: (count) => `Parcours de ${count} outils et plateformes IA vérifiés.`,
+    searchUpdates: 'Rechercher des mises à jour ou outils...',
+    search: 'Recherche...',
+    checkUpdates: 'Vérifier les mises à jour',
+    syncing: 'Synchronisation...',
+    releaseFeed: 'Flux des versions',
+    toolsDir: 'Annuaire',
+    filterFeed: 'Filtrer le flux',
+    categories: 'Catégories',
+    aiModels: 'Modèles IA',
+    mobile: 'Mobile & OS',
+    proInsights: 'Insights Pro',
+    proCopy: "Analyse d'impact détaillée pour 240+ outils IA.",
+    upgradePlan: 'Améliorer le plan',
+    updates24h: 'Mises à jour (24h)',
+    totalTracked: 'Total suivi',
+    noUpdates: 'Aucune mise à jour pour ces filtres.',
+    clearFilters: 'Effacer les filtres',
+    noTools: 'Aucun outil trouvé.',
+    allTools: 'Tous les outils',
+    topTrending: 'Tendances',
+    mostMentioned: 'Les plus cités',
+  },
+  es: {
+    releaseDashboard: 'Panel de lanzamientos',
+    toolsDirectory: 'Directorio de herramientas IA',
+    releaseSubtitle: 'Sigue las últimas actualizaciones de software en tu ecosistema.',
+    directorySubtitle: (count) => `Explorando ${count} herramientas y plataformas IA verificadas.`,
+    searchUpdates: 'Buscar actualizaciones o herramientas...',
+    search: 'Buscar...',
+    checkUpdates: 'Buscar actualizaciones',
+    syncing: 'Sincronizando...',
+    releaseFeed: 'Feed de lanzamientos',
+    toolsDir: 'Directorio',
+    filterFeed: 'Filtrar feed',
+    categories: 'Categorías',
+    aiModels: 'Modelos IA',
+    mobile: 'Móvil & OS',
+    proInsights: 'Insights Pro',
+    proCopy: 'Análisis de impacto para 240+ herramientas IA.',
+    upgradePlan: 'Mejorar plan',
+    updates24h: 'Actualizaciones (24h)',
+    totalTracked: 'Total rastreados',
+    noUpdates: 'No hay actualizaciones con estos filtros.',
+    clearFilters: 'Limpiar filtros',
+    noTools: 'No se encontraron herramientas.',
+    allTools: 'Todas las herramientas',
+    topTrending: 'Tendencias',
+    mostMentioned: 'Más mencionadas ahora',
+  },
+  pt: {
+    releaseDashboard: 'Painel de lançamentos',
+    toolsDirectory: 'Diretório de ferramentas IA',
+    releaseSubtitle: 'Acompanhe as últimas atualizações de software do seu ecossistema.',
+    directorySubtitle: (count) => `Explorando ${count} ferramentas e plataformas de IA verificadas.`,
+    searchUpdates: 'Buscar atualizações ou ferramentas...',
+    search: 'Buscar...',
+    checkUpdates: 'Verificar atualizações',
+    syncing: 'Sincronizando...',
+    releaseFeed: 'Feed de lançamentos',
+    toolsDir: 'Diretório',
+    filterFeed: 'Filtrar feed',
+    categories: 'Categorias',
+    aiModels: 'Modelos IA',
+    mobile: 'Mobile & OS',
+    proInsights: 'Insights Pro',
+    proCopy: 'Análise de impacto para 240+ ferramentas de IA.',
+    upgradePlan: 'Atualizar plano',
+    updates24h: 'Atualizações (24h)',
+    totalTracked: 'Total rastreado',
+    noUpdates: 'Sem atualizações para estes filtros.',
+    clearFilters: 'Limpar filtros',
+    noTools: 'Nenhuma ferramenta encontrada.',
+    allTools: 'Todas as ferramentas',
+    topTrending: 'Em alta',
+    mostMentioned: 'Mais mencionadas agora',
+  },
+  zh: {
+    releaseDashboard: '发布看板',
+    toolsDirectory: 'AI 工具目录',
+    releaseSubtitle: '跟踪生态中的最新软件更新。',
+    directorySubtitle: (count) => `浏览 ${count} 个已验证的 AI 工具与平台。`,
+    searchUpdates: '搜索更新或工具...',
+    search: '搜索...',
+    checkUpdates: '检查更新',
+    syncing: '同步中...',
+    releaseFeed: '发布动态',
+    toolsDir: '工具目录',
+    filterFeed: '筛选动态',
+    categories: '分类',
+    aiModels: 'AI 模型',
+    mobile: '移动 & 系统',
+    proInsights: '专业洞察',
+    proCopy: '获取 240+ AI 工具的影响分析。',
+    upgradePlan: '升级方案',
+    updates24h: '24h 更新',
+    totalTracked: '跟踪总数',
+    noUpdates: '没有符合条件的更新。',
+    clearFilters: '清除筛选',
+    noTools: '未找到相关工具。',
+    allTools: '全部工具',
+    topTrending: '热门趋势',
+    mostMentioned: '当前最常提及',
+  },
+  ja: {
+    releaseDashboard: 'リリースダッシュボード',
+    toolsDirectory: 'AI ツールディレクトリ',
+    releaseSubtitle: 'エコシステム内の最新アップデートを追跡。',
+    directorySubtitle: (count) => `${count} 件の検証済みAIツールとプラットフォームを閲覧中。`,
+    searchUpdates: 'アップデートやツールを検索...',
+    search: '検索...',
+    checkUpdates: '更新を確認',
+    syncing: '同期中...',
+    releaseFeed: 'リリースフィード',
+    toolsDir: 'ツールディレクトリ',
+    filterFeed: 'フィードを絞り込み',
+    categories: 'カテゴリ',
+    aiModels: 'AIモデル',
+    mobile: 'モバイル & OS',
+    proInsights: 'プロインサイト',
+    proCopy: '240以上のAIツールの影響分析を入手。',
+    upgradePlan: 'プランをアップグレード',
+    updates24h: '更新 (24h)',
+    totalTracked: '総トラッキング数',
+    noUpdates: '該当する更新がありません。',
+    clearFilters: 'フィルターをクリア',
+    noTools: '該当ツールがありません。',
+    allTools: 'すべてのツール',
+    topTrending: 'トレンド',
+    mostMentioned: '今注目',
+  },
+};
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [releases, setReleases] = useState([]);
@@ -60,6 +290,16 @@ export default function App() {
   const [authMode, setAuthMode] = useState('login');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const localAuthEnabled = !isFirebaseEnabled;
+  const [language, setLanguage] = useState('en');
+
+  const t = (key, ...args) => {
+    const langPack = TRANSLATIONS[language] || TRANSLATIONS.en;
+    const value = langPack[key] ?? TRANSLATIONS.en[key] ?? key;
+    if (typeof value === 'function') {
+      return value(...args);
+    }
+    return value;
+  };
 
   const seedLocalData = () => {
     setReleases(
@@ -316,7 +556,7 @@ export default function App() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
             type="text"
-            placeholder="Search updates or tools..."
+            placeholder={t('searchUpdates')}
             className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-10 pr-4 py-1.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-zinc-600"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
@@ -324,6 +564,20 @@ export default function App() {
         </div>
 
         <div className="flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
+            <label className="text-[11px] uppercase tracking-[0.08em] text-zinc-500 font-semibold">Lang</label>
+            <select
+              value={language}
+              onChange={(event) => setLanguage(event.target.value)}
+              className="bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-white px-2 py-1 focus:outline-none focus:border-indigo-500/50"
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <button
             onClick={handleSync}
             disabled={syncing}
@@ -334,7 +588,7 @@ export default function App() {
             }`}
           >
             <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
-            <span className="hidden lg:inline">{syncing ? 'Syncing...' : 'Check Updates'}</span>
+            <span className="hidden lg:inline">{syncing ? t('syncing') : t('checkUpdates')}</span>
           </button>
 
           {user && !user.isAnonymous ? (
@@ -404,7 +658,7 @@ export default function App() {
               <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Research</h3>
               <SidebarItem
                 icon={Layout}
-                label="Release Feed"
+                label={t('releaseFeed')}
                 active={activeView === 'feed'}
                 onClick={() => {
                   setActiveView('feed');
@@ -413,7 +667,7 @@ export default function App() {
               />
               <SidebarItem
                 icon={Grid}
-                label="Tools Directory"
+                label={t('toolsDir')}
                 active={activeView === 'directory'}
                 count={TOOLS_CATALOG.length}
                 onClick={() => {
@@ -424,19 +678,19 @@ export default function App() {
             </div>
             <div className="space-y-1">
               <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                {activeView === 'feed' ? 'Filter Feed' : 'Categories'}
+                {activeView === 'feed' ? t('filterFeed') : t('categories')}
               </h3>
               {activeView === 'feed' ? (
                 <>
                   <SidebarItem
                     icon={Sparkles}
-                    label="AI Models"
+                    label={t('aiModels')}
                     active={activeFilter === 'AI Models'}
                     onClick={() => setActiveFilter('AI Models')}
                   />
                   <SidebarItem
                     icon={Smartphone}
-                    label="Mobile & OS"
+                    label={t('mobile')}
                     active={activeFilter === 'Mobile'}
                     onClick={() => setActiveFilter('Mobile')}
                   />
@@ -455,10 +709,10 @@ export default function App() {
             </div>
             <div className="pt-4 border-t border-zinc-800">
               <div className="bg-zinc-900/50 rounded-xl p-4 border border-zinc-800">
-                <h4 className="text-sm font-medium text-white mb-1">Pro Insights</h4>
-                <p className="text-xs text-zinc-500 mb-3">Get detailed impact analysis for 240+ AI tools.</p>
+                <h4 className="text-sm font-medium text-white mb-1">{t('proInsights')}</h4>
+                <p className="text-xs text-zinc-500 mb-3">{t('proCopy')}</p>
                 <button className="w-full py-1.5 text-xs font-medium bg-white text-black rounded hover:bg-zinc-200 transition-colors">
-                  Upgrade Plan
+                  {t('upgradePlan')}
                 </button>
               </div>
             </div>
@@ -469,23 +723,23 @@ export default function App() {
           <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-end mb-8">
             <div>
               <h1 className="text-3xl font-bold text-white tracking-tight">
-                {activeView === 'feed' ? 'Release Dashboard' : 'AI Tools Directory'}
+                {activeView === 'feed' ? t('releaseDashboard') : t('toolsDirectory')}
               </h1>
               <p className="text-zinc-500 mt-1">
                 {activeView === 'feed'
-                  ? 'Track the latest software updates across your ecosystem.'
-                  : `Browsing ${TOOLS_CATALOG.length} verified AI research tools and platforms.`}
+                  ? t('releaseSubtitle')
+                  : t('directorySubtitle', TOOLS_CATALOG.length)}
               </p>
             </div>
             {activeView === 'feed' && (
               <div className="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                 <StatsCard
-                  title="Updates (24h)"
+                  title={t('updates24h')}
                   value={releases.filter((release) => new Date(release.date) > new Date(Date.now() - 86400000)).length}
                   icon={Clock}
                   trend="+New"
                 />
-                <StatsCard title="Total Tracked" value={releases.length} icon={Database} />
+                <StatsCard title={t('totalTracked')} value={releases.length} icon={Database} />
               </div>
             )}
           </div>
@@ -494,7 +748,7 @@ export default function App() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
             <input
               type="text"
-              placeholder="Search..."
+              placeholder={t('search')}
               className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
@@ -513,8 +767,8 @@ export default function App() {
               <div className="mb-6 bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div>
-                    <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">Top Trending</p>
-                    <p className="text-sm text-zinc-400">Most-mentioned tools right now</p>
+                    <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">{t('topTrending')}</p>
+                    <p className="text-sm text-zinc-400">{t('mostMentioned')}</p>
                   </div>
                   <span className="px-2 py-1 text-[11px] rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
                     Auto-curated
@@ -552,7 +806,7 @@ export default function App() {
 
               {filteredReleases.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20">
-                  <p className="text-zinc-500">No updates found matching your filters.</p>
+                  <p className="text-zinc-500">{t('noUpdates')}</p>
                   <button
                     onClick={() => {
                       setSearchQuery('');
@@ -560,7 +814,7 @@ export default function App() {
                     }}
                     className="mt-2 text-indigo-400 text-sm"
                   >
-                    Clear filters
+                    {t('clearFilters')}
                   </button>
                 </div>
               ) : (
@@ -584,7 +838,7 @@ export default function App() {
                       : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700'
                   }`}
                 >
-                  All Tools
+                  {t('allTools')}
                 </button>
                 {Object.entries(CATEGORIES).map(([key, category]) => (
                   <button
@@ -603,7 +857,7 @@ export default function App() {
 
               {filteredTools.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20">
-                  <p className="text-zinc-500">No tools found matching your search.</p>
+                  <p className="text-zinc-500">{t('noTools')}</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
