@@ -89,6 +89,9 @@ const TRANSLATIONS = {
     signup: 'Sign Up',
     logout: 'Sign Out',
     offlineDemo: 'Offline demo',
+    trendingLeaderboard: 'Trending Leaderboard',
+    usage: 'Usage',
+    rank: 'Rank',
   },
   ru: {
     releaseDashboard: 'Панель релизов',
@@ -122,6 +125,9 @@ const TRANSLATIONS = {
     signup: 'Регистрация',
     logout: 'Выйти',
     offlineDemo: 'Оффлайн демо',
+    trendingLeaderboard: 'Рейтинг трендов',
+    usage: 'Использование',
+    rank: 'Ранг',
   },
   it: {
     releaseDashboard: 'Dashboard Rilasci',
@@ -155,6 +161,9 @@ const TRANSLATIONS = {
     signup: 'Registrati',
     logout: 'Esci',
     offlineDemo: 'Demo offline',
+    trendingLeaderboard: 'Classifica trend',
+    usage: 'Utilizzo',
+    rank: 'Posizione',
   },
   fr: {
     releaseDashboard: 'Tableau des versions',
@@ -188,6 +197,9 @@ const TRANSLATIONS = {
     signup: 'Créer un compte',
     logout: 'Déconnexion',
     offlineDemo: 'Démo hors ligne',
+    trendingLeaderboard: 'Classement tendances',
+    usage: 'Usage',
+    rank: 'Rang',
   },
   es: {
     releaseDashboard: 'Panel de lanzamientos',
@@ -221,6 +233,9 @@ const TRANSLATIONS = {
     signup: 'Crear cuenta',
     logout: 'Cerrar sesión',
     offlineDemo: 'Demo sin conexión',
+    trendingLeaderboard: 'Ranking de tendencias',
+    usage: 'Uso',
+    rank: 'Ranking',
   },
   pt: {
     releaseDashboard: 'Painel de lançamentos',
@@ -254,6 +269,9 @@ const TRANSLATIONS = {
     signup: 'Criar conta',
     logout: 'Sair',
     offlineDemo: 'Demo offline',
+    trendingLeaderboard: 'Ranking de tendências',
+    usage: 'Uso',
+    rank: 'Posição',
   },
   zh: {
     releaseDashboard: '发布看板',
@@ -287,6 +305,9 @@ const TRANSLATIONS = {
     signup: '注册',
     logout: '退出',
     offlineDemo: '离线演示',
+    trendingLeaderboard: '趋势榜',
+    usage: '使用率',
+    rank: '排名',
   },
   ja: {
     releaseDashboard: 'リリースダッシュボード',
@@ -320,6 +341,9 @@ const TRANSLATIONS = {
     signup: 'サインアップ',
     logout: 'ログアウト',
     offlineDemo: 'オフラインデモ',
+    trendingLeaderboard: 'トレンドランキング',
+    usage: '利用率',
+    rank: '順位',
   },
 };
 
@@ -560,7 +584,7 @@ export default function App() {
     [searchQuery, activeFilter],
   );
 
-  const trendingTools = useMemo(() => {
+  const { trendingTop, trendingAll } = useMemo(() => {
     const vendorBoost = new Set(['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit']);
     const categoryBoost = {
       coding: 3,
@@ -568,18 +592,25 @@ export default function App() {
       data: 2,
       chatbots: 1,
     };
-    return [...TOOLS_CATALOG]
+    const scored = [...TOOLS_CATALOG]
       .map((tool) => {
         const base = (tool.tags?.length || 0) * 1.5;
         const vBoost = vendorBoost.has(tool.vendor) ? 3 : 0;
         const cBoost = categoryBoost[tool.category] || 0;
-        return { ...tool, _score: base + vBoost + cBoost };
+        const score = base + vBoost + cBoost;
+        const usage = Math.min(98, Math.round(60 + score * 3));
+        return { ...tool, _score: score, _usage: usage };
       })
       .sort((a, b) => {
         if (b._score === a._score) return b.name.localeCompare(a.name);
         return b._score - a._score;
       })
-      .slice(0, 8);
+      .map((tool, index) => ({ ...tool, _rank: index + 1 }));
+
+    return {
+      trendingTop: scored.slice(0, 8),
+      trendingAll: scored,
+    };
   }, []);
 
   const openDetail = (item, type) => {
@@ -828,56 +859,59 @@ export default function App() {
             <>
               <div className="mb-6 bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
                 <div className="flex items-center justify-between gap-3 mb-3">
-                  <div>
-                    <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">{t('topTrending')}</p>
-                    <p className="text-sm text-zinc-400">{t('mostMentioned')}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">{t('trendingLeaderboard')}</p>
+                    <span className="px-2 py-1 text-[11px] rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                      {t('autoCurated')}
+                    </span>
                   </div>
-                  <span className="px-2 py-1 text-[11px] rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                    Auto-curated
-                  </span>
+                  <span className="text-[11px] text-zinc-500">{t('mostMentioned')}</span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                  {trendingTools.map((tool, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {trendingAll.map((tool) => (
                     <button
                       key={tool.id}
                       onClick={() => openDetail(tool, 'tool')}
-                      className="group text-left bg-zinc-950/60 border border-zinc-800 hover:border-indigo-500/30 hover:bg-zinc-900/60 rounded-lg p-3 transition-all"
+                      className="group text-left bg-zinc-950/60 border border-zinc-800 hover:border-indigo-500/30 hover:bg-zinc-900/60 rounded-lg p-3 transition-all flex items-start gap-3"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[11px] font-semibold text-zinc-500">#{index + 1}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
-                          {tool.category}
-                        </span>
+                      <div className="flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-200 font-bold">
+                        <span className="text-[11px]">{t('rank')} #{tool._rank}</span>
                       </div>
-                      <p className="text-sm font-semibold text-white group-hover:text-indigo-100">{tool.name}</p>
-                      <p className="text-xs text-zinc-500 mb-2">{tool.vendor}</p>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
-                          {tool.version || 'Latest'}
-                        </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
-                          {tool.pricing || 'Pricing'}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mb-2">
-                        {tool.tags?.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag}
-                            className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800/80 text-zinc-400 border border-zinc-800"
-                          >
-                            {tag}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-sm font-semibold text-white group-hover:text-indigo-100 truncate">{tool.name}</p>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
+                            {tool.category}
                           </span>
-                        ))}
-                      </div>
-                      <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80">
-                        {(tool.platforms || []).slice(0, 3).map((platform) => (
-                          <span
-                            key={platform}
-                            className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800"
-                          >
-                            {platform}
+                        </div>
+                        <p className="text-xs text-zinc-500 mb-1 truncate">{tool.vendor}</p>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
+                            {tool.version || 'Latest'}
                           </span>
-                        ))}
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
+                            {tool.pricing || 'Pricing'}
+                          </span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-200 border border-purple-500/20">
+                            {t('usage')}: {tool._usage}%
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80 mb-1">
+                          {(tool.platforms || []).slice(0, 3).map((platform) => (
+                            <span
+                              key={platform}
+                              className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800"
+                            >
+                              {platform}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-emerald-400"
+                            style={{ width: `${tool._usage}%` }}
+                          />
+                        </div>
                       </div>
                     </button>
                   ))}
