@@ -33,6 +33,21 @@ const BASE_TOOLS = [
   { id: 't14j', name: 'Code Llama', vendor: 'Meta', category: 'coding', description: 'Open-source Llama family tuned for coding tasks.', tags: ['Open Source', 'Models', 'Coding'], website: 'https://ai.meta.com/resources/models-and-libraries/code-llama' },
   { id: 't14k', name: 'StarCoder', vendor: 'Hugging Face / ServiceNow', category: 'coding', description: 'Open code model for permissive use with strong multilingual support.', tags: ['Open Models', 'Coding'], website: 'https://huggingface.co/bigcode/starcoder' },
   { id: 't14l', name: 'StarCoder2', vendor: 'Hugging Face / ServiceNow', category: 'coding', description: 'Successor to StarCoder with improved context and quality.', tags: ['Open Models', 'Coding', 'Context'], website: 'https://huggingface.co/bigcode/starcoder2' },
+  { id: 't14m', name: 'Supermaven', vendor: 'Supermaven', category: 'coding', description: 'Ultra-fast AI code completion with large context windows.', tags: ['Completion', 'AI', 'Context'], website: 'https://www.supermaven.com' },
+  { id: 't14n', name: 'Warp', vendor: 'Warp', category: 'coding', description: 'Modern terminal with built-in AI command search and workflows.', tags: ['Terminal', 'AI', 'Productivity'], website: 'https://www.warp.dev' },
+  { id: 't14o', name: 'VS Code', vendor: 'Microsoft', category: 'coding', description: 'Industry-standard code editor with rich extension ecosystem.', tags: ['Editor', 'Open Source', 'Extensions'], website: 'https://code.visualstudio.com' },
+  { id: 't14p', name: 'IntelliJ IDEA', vendor: 'JetBrains', category: 'coding', description: 'Powerful IDE for Java/Kotlin and enterprise codebases.', tags: ['IDE', 'Java', 'Enterprise'], website: 'https://www.jetbrains.com/idea/' },
+  { id: 't14q', name: 'WebStorm', vendor: 'JetBrains', category: 'coding', description: 'Specialized IDE for JavaScript and TypeScript.', tags: ['IDE', 'JavaScript', 'TypeScript'], website: 'https://www.jetbrains.com/webstorm/' },
+  { id: 't14r', name: 'Fleet', vendor: 'JetBrains', category: 'coding', description: 'Lightweight, collaborative IDE by JetBrains.', tags: ['IDE', 'Lightweight', 'Collaborative'], website: 'https://www.jetbrains.com/fleet/' },
+  { id: 't14s', name: 'Postman', vendor: 'Postman', category: 'coding', description: 'API platform for testing, collaboration, and monitoring.', tags: ['API', 'Testing', 'Collaboration'], website: 'https://www.postman.com' },
+  { id: 't14t', name: 'Insomnia', vendor: 'Kong', category: 'coding', description: 'REST/GraphQL client for fast API testing.', tags: ['API', 'Testing', 'REST'], website: 'https://insomnia.rest' },
+  { id: 't14u', name: 'Hoppscotch', vendor: 'Hoppscotch', category: 'coding', description: 'Lightweight open-source API testing tool.', tags: ['API', 'Testing', 'Open Source'], website: 'https://hoppscotch.io' },
+  { id: 't14v', name: 'Git', vendor: 'Git', category: 'coding', description: 'Distributed version control system for source code history.', tags: ['VCS', 'Git', 'CLI'], website: 'https://git-scm.com' },
+  { id: 't14w', name: 'GitHub', vendor: 'GitHub', category: 'coding', description: 'Platform for hosting, collaborating, and automating code.', tags: ['VCS', 'Collaboration', 'DevOps'], website: 'https://github.com' },
+  { id: 't14x', name: 'GitLab', vendor: 'GitLab', category: 'coding', description: 'DevOps platform with source hosting, CI/CD, and security.', tags: ['VCS', 'CI/CD', 'DevOps'], website: 'https://gitlab.com' },
+  { id: 't14y', name: 'GitKraken', vendor: 'GitKraken', category: 'coding', description: 'Visual Git client to manage branches and repos.', tags: ['VCS', 'GUI', 'Productivity'], website: 'https://www.gitkraken.com' },
+  { id: 't14z', name: 'Oh My Zsh', vendor: 'Oh My Zsh', category: 'coding', description: 'Framework to manage Zsh configuration with plugins/themes.', tags: ['Terminal', 'Zsh', 'Productivity'], website: 'https://ohmyz.sh' },
+  { id: 't14aa', name: 'Fig', vendor: 'Fig', category: 'coding', description: 'Autocomplete menus and snippets for your terminal.', tags: ['Terminal', 'Autocomplete', 'Productivity'], website: 'https://fig.io' },
   { id: 't15', name: 'Midjourney', vendor: 'Midjourney', category: 'image', description: 'High-fidelity artistic image generation known for distinct style and quality.', tags: ['Art', 'Generative', 'Discord'], website: 'https://www.midjourney.com' },
   { id: 't16', name: 'DALL·E 3', vendor: 'OpenAI', category: 'image', description: 'Natively integrated into ChatGPT for conversational image generation.', tags: ['Easy', 'Chat', 'Integration'], website: 'https://openai.com/dall-e-3' },
   { id: 't17', name: 'Canva Magic', vendor: 'Canva', category: 'image', description: 'Design suite with embedded text-to-image, magic edit, and erasure tools.', tags: ['Design', 'Marketing', 'Easy'], website: 'https://www.canva.com/ai' },
@@ -145,13 +160,59 @@ const BASE_TOOLS = [
   { id: 'p20', name: 'Dovetail', vendor: 'Dovetail', category: 'product', description: 'User research hub that tags interviews and pain points automatically.', tags: ['Research', 'Tagging', 'Interviews'], website: 'https://dovetail.com' },
 ];
 
-const DEFAULT_PLATFORMS = ['Web', 'macOS', 'Windows', 'iOS', 'Android'];
+const DEFAULT_PLATFORMS = ['Web'];
 const DEFAULT_PRICING = 'Tiered plans';
 const DEFAULT_VERSION = 'Latest';
+
+const inferPlatforms = (tool) => {
+  if (tool.platforms) return tool.platforms;
+  const platforms = new Set(DEFAULT_PLATFORMS);
+  const vendor = (tool.vendor || '').toLowerCase();
+  const name = (tool.name || '').toLowerCase();
+  const category = (tool.category || '').toLowerCase();
+
+  if (category === 'mobile') {
+    // Mobile OS entries use their own name as platform
+    return [tool.name];
+  }
+
+  if (vendor.includes('apple') || name.includes('ios') || name.includes('mac')) {
+    platforms.add('macOS');
+    platforms.add('iOS');
+  }
+
+  if (vendor.includes('microsoft') || name.includes('windows')) {
+    platforms.add('Windows');
+  }
+
+  if (vendor.includes('google') || name.includes('android') || name.includes('chromeos')) {
+    platforms.add('Android');
+    platforms.add('ChromeOS');
+  }
+
+  if (vendor.includes('linux') || name.includes('linux') || name.includes('ubuntu') || name.includes('debian') || name.includes('fedora') || name.includes('red hat') || name.includes('podman')) {
+    platforms.add('Linux');
+  }
+
+  if (vendor.includes('jetbrains')) {
+    platforms.add('macOS');
+    platforms.add('Windows');
+    platforms.add('Linux');
+  }
+
+  // Terminals/CLI often run on desktop OSes
+  if (['terminal', 'zsh', 'shell', 'git', 'warp', 'oh my zsh', 'fig'].some((keyword) => name.includes(keyword))) {
+    platforms.add('macOS');
+    platforms.add('Windows');
+    platforms.add('Linux');
+  }
+
+  return Array.from(platforms);
+};
 
 export const TOOLS_CATALOG = BASE_TOOLS.map((tool) => ({
   version: DEFAULT_VERSION,
   pricing: DEFAULT_PRICING,
-  platforms: DEFAULT_PLATFORMS,
+  platforms: inferPlatforms(tool),
   ...tool,
 }));
