@@ -39,6 +39,7 @@ import { TOOLS_CATALOG } from './data/tools.js';
 import { appId, auth, authToken, db, isFirebaseEnabled } from './services/firebase.js';
 import { MockReleaseService } from './services/mockReleaseService.js';
 import { getTrendingTools } from './services/trendingApi.js';
+import { CURATED_TRENDING } from './data/trending.js';
 
 const LOCAL_TEST_USER = {
   email: 'zaid5044@gmail.com',
@@ -405,6 +406,14 @@ export default function App() {
   }, [mobileMenuOpen]);
 
   useEffect(() => {
+    // Seed with curated, then try live Gemini fetch
+    setTrendingTools(
+      CURATED_TRENDING.map((tool, index) => ({
+        ...tool,
+        id: tool.id || `${tool.name}-${index}`,
+        _rank: index + 1,
+      })),
+    );
     fetchTrending();
   }, []);
 
@@ -417,29 +426,15 @@ export default function App() {
     return value;
   };
 
-  const localTrendingAll = useMemo(() => {
-    const vendorBoost = new Set(['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit']);
-    const categoryBoost = {
-      coding: 3,
-      automation: 2,
-      data: 2,
-      chatbots: 1,
-    };
-    return [...TOOLS_CATALOG]
-      .map((tool) => {
-        const base = (tool.tags?.length || 0) * 1.5;
-        const vBoost = vendorBoost.has(tool.vendor) ? 3 : 0;
-        const cBoost = categoryBoost[tool.category] || 0;
-        const score = base + vBoost + cBoost;
-        const usage = Math.min(98, Math.round(60 + score * 3));
-        return { ...tool, _score: score, _usage: usage };
-      })
-      .sort((a, b) => {
-        if (b._score === a._score) return b.name.localeCompare(a.name);
-        return b._score - a._score;
-      })
-      .map((tool, index) => ({ ...tool, _rank: index + 1 }));
-  }, []);
+  const localTrendingAll = useMemo(
+    () =>
+      CURATED_TRENDING.map((tool, index) => ({
+        ...tool,
+        id: tool.id || `${tool.name}-${index}`,
+        _rank: index + 1,
+      })),
+    [],
+  );
 
   const seedLocalData = () => {
     setReleases(
@@ -474,7 +469,7 @@ export default function App() {
       tags: tool.tags || [],
       platforms: tool.platforms || [],
       _rank: index + 1,
-      _usage: Math.min(98, Math.max(40, Math.round(60 + (tool.tags?.length || 1) * 3))),
+      _usage: typeof tool._usage === 'number' || typeof tool.usage === 'number' ? tool._usage ?? tool.usage : undefined,
     }));
 
   const fetchTrending = async (category = trendingCategory) => {
@@ -1085,37 +1080,41 @@ export default function App() {
                           </span>
                         </div>
                         <p className="text-xs text-zinc-500 mb-1 truncate">{tool.vendor || tool.category || 'Trending'}</p>
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
-                            {tool.version || 'Latest'}
-                          </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
-                            {tool.pricing || 'Pricing'}
-                          </span>
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
+                          {tool.version || 'Latest'}
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
+                          {tool.pricing || 'Pricing'}
+                        </span>
+                        {typeof tool._usage === 'number' && (
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-200 border border-purple-500/20">
                             {t('usage')}: {tool._usage}%
                           </span>
-                        </div>
-                        <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80 mb-1">
-                          {(tool.platforms || tool.tags || []).slice(0, 3).map((platform) => (
-                            <span
-                              key={platform}
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80 mb-1">
+                        {(tool.platforms || tool.tags || []).slice(0, 3).map((platform) => (
+                          <span
+                            key={platform}
                               className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800"
                             >
                               {platform}
                             </span>
                           ))}
                         </div>
-                        <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-emerald-400"
-                            style={{ width: `${tool._usage}%` }}
-                          />
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                        {typeof tool._usage === 'number' && (
+                          <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-emerald-400"
+                              style={{ width: `${tool._usage}%` }}
+                            />
+                          </div>
+                        )}
+                    </div>
+                  </button>
+                ))}
+              </div>
                 <p className="mt-3 text-[11px] text-zinc-500">Showing top 10 results.</p>
               </div>
 
