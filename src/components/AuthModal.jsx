@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertCircle, Loader2, Lock, Mail, User, X } from 'lucide-react';
 import {
   createUserWithEmailAndPassword,
@@ -13,8 +13,25 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false,
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   if (!isOpen) return null;
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('releasehub.remember');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.email && parsed?.password) {
+          setEmail(parsed.email);
+          setPassword(parsed.password);
+          setRememberMe(true);
+        }
+      }
+    } catch (storageError) {
+      console.error('Failed to load remembered credentials', storageError);
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,27 +41,25 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false,
     try {
       if (isLocalMode && onLocalAuth) {
         await onLocalAuth(email, password, name, mode);
-        onClose();
-        return;
-      }
-
-      if (mode === 'signup') {
-        if (!isLocalMode) {
-          if (!auth) throw new Error('Authentication is not available.');
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          await updateProfile(userCredential.user, { displayName: name });
-        } else {
-          await onLocalAuth?.(email, password, name, mode);
-        }
+      } else if (mode === 'signup') {
+        if (!auth) throw new Error('Authentication is not available.');
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await updateProfile(userCredential.user, { displayName: name });
       } else {
-        if (!isLocalMode) {
-          if (!auth) throw new Error('Authentication is not available.');
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          await onLocalAuth?.(email, password, name, mode);
-        }
+        if (!auth) throw new Error('Authentication is not available.');
+        await signInWithEmailAndPassword(auth, email, password);
       }
       onClose();
+
+      try {
+        if (rememberMe) {
+          localStorage.setItem('releasehub.remember', JSON.stringify({ email, password }));
+        } else {
+          localStorage.removeItem('releasehub.remember');
+        }
+      } catch (storageError) {
+        console.error('Failed to persist remembered credentials', storageError);
+      }
     } catch (authError) {
       let message = isLocalMode ? 'Invalid credentials.' : 'Authentication failed.';
       if (authError?.code === 'auth/email-already-in-use') message = 'Email already in use.';
@@ -126,6 +141,16 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false,
               />
             </div>
           </div>
+
+          <label className="flex items-center gap-2 text-xs text-zinc-400">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(event) => setRememberMe(event.target.checked)}
+              className="rounded border-zinc-700 bg-zinc-900 text-indigo-500 focus:ring-indigo-500"
+            />
+            Remember me on this device
+          </label>
 
           <button
             type="submit"
