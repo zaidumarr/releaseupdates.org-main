@@ -7,6 +7,7 @@ import {
   Briefcase,
   Workflow,
   BarChart3,
+  HeartPulse,
 } from 'lucide-react';
 
 export const CATEGORIES = {
@@ -65,5 +66,12 @@ export const CATEGORIES = {
     color: 'text-slate-400',
     bg: 'bg-slate-500/10',
     border: 'border-slate-500/20',
+  },
+  health: {
+    label: 'HealthTech',
+    icon: HeartPulse,
+    color: 'text-red-400',
+    bg: 'bg-red-500/10',
+    border: 'border-red-500/20',
   },
 };
