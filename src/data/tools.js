@@ -53,6 +53,18 @@ const BASE_TOOLS = [
   { id: 't32', name: 'Jasper', vendor: 'Jasper', category: 'productivity', description: 'Enterprise AI writing with brand voice controls and team collaboration.', tags: ['Marketing', 'Copy', 'Brand'] },
   { id: 't33', name: 'Pinecone', vendor: 'Pinecone', category: 'data', description: 'Fully managed vector database for retrieval-augmented generation at scale.', tags: ['Vector', 'RAG', 'Search'] },
   { id: 't34', name: 'LangChain', vendor: 'LangChain', category: 'automation', description: 'Orchestration framework for agents, tools, and retrieval pipelines.', tags: ['Framework', 'Agents', 'Pipelines'] },
+  { id: 't35', name: 'Hippocratic AI', vendor: 'Hippocratic AI', category: 'health', description: 'Voice agent platform for clinical workflows with safety guardrails.', tags: ['Healthcare', 'Voice', 'Agents'] },
+  { id: 't36', name: 'Tempus AI', vendor: 'Tempus', category: 'health', description: 'Genomic and clinical AI platform delivering precision oncology insights.', tags: ['Genomics', 'Oncology', 'Clinical'] },
+  { id: 't37', name: 'Epic Systems', vendor: 'Epic', category: 'health', description: 'Flagship EHR powering large hospital systems like Cleveland Clinic and Mayo Clinic.', tags: ['EHR', 'Enterprise', 'Hospitals'] },
+  { id: 't38', name: 'Oracle Health (Cerner)', vendor: 'Oracle', category: 'health', description: 'Large-scale EHR suite with major government and global health footprints.', tags: ['EHR', 'Enterprise', 'Government'] },
+  { id: 't39', name: 'athenahealth', vendor: 'athenahealth', category: 'health', description: 'Cloud EHR and revenue cycle stack popular with independent practices and urgent care.', tags: ['EHR', 'Practice', 'Billing'] },
+  { id: 't40', name: 'DrChrono', vendor: 'DrChrono', category: 'health', description: 'Mobile-first, iPad-friendly EHR tailored for modern private practices.', tags: ['EHR', 'Mobile', 'Practice'] },
+  { id: 't41', name: 'Doxy.me', vendor: 'Doxy', category: 'health', description: 'Simple, no-download telemedicine video platform built for clinicians.', tags: ['Telemedicine', 'Video', 'HIPAA'] },
+  { id: 't42', name: 'Teladoc Health', vendor: 'Teladoc', category: 'health', description: 'Enterprise virtual care platform used across payers and health systems.', tags: ['Telemedicine', 'Virtual Care', 'Enterprise'] },
+  { id: 't43', name: 'Zoom for Healthcare', vendor: 'Zoom', category: 'health', description: 'HIPAA-compliant Zoom offering for virtual visits and care collaboration.', tags: ['Telemedicine', 'Video', 'HIPAA'] },
+  { id: 't44', name: 'Abridge', vendor: 'Abridge', category: 'health', description: 'Ambient AI that listens to clinical visits and auto-generates visit notes.', tags: ['Medical AI', 'Ambient', 'Notes'] },
+  { id: 't45', name: 'Aidoc', vendor: 'Aidoc', category: 'health', description: 'AI triage and imaging analysis for radiology to detect strokes and fractures.', tags: ['Medical AI', 'Imaging', 'Radiology'] },
+  { id: 't46', name: 'Google Med-Gemini / Med-PaLM', vendor: 'Google', category: 'health', description: 'Google’s medical-tuned LLMs for clinical reasoning and documentation.', tags: ['Medical AI', 'LLM', 'Clinical'] },
 ];
 
 const DEFAULT_PLATFORMS = ['Web', 'macOS', 'Windows', 'iOS', 'Android'];
