@@ -92,6 +92,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'Trending Leaderboard',
     usage: 'Usage',
     rank: 'Rank',
+    aiToolsSection: 'AI Tools Spotlight',
+    browseAll: 'Browse all',
   },
   ru: {
     releaseDashboard: 'Панель релизов',
@@ -128,6 +130,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'Рейтинг трендов',
     usage: 'Использование',
     rank: 'Ранг',
+    aiToolsSection: 'Витрина AI инструментов',
+    browseAll: 'Смотреть все',
   },
   it: {
     releaseDashboard: 'Dashboard Rilasci',
@@ -164,6 +168,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'Classifica trend',
     usage: 'Utilizzo',
     rank: 'Posizione',
+    aiToolsSection: 'Vetrina AI Tools',
+    browseAll: 'Vedi tutto',
   },
   fr: {
     releaseDashboard: 'Tableau des versions',
@@ -200,6 +206,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'Classement tendances',
     usage: 'Usage',
     rank: 'Rang',
+    aiToolsSection: 'Sélection d’outils IA',
+    browseAll: 'Voir tout',
   },
   es: {
     releaseDashboard: 'Panel de lanzamientos',
@@ -236,6 +244,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'Ranking de tendencias',
     usage: 'Uso',
     rank: 'Ranking',
+    aiToolsSection: 'Escaparate de herramientas IA',
+    browseAll: 'Ver todas',
   },
   pt: {
     releaseDashboard: 'Painel de lançamentos',
@@ -272,6 +282,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'Ranking de tendências',
     usage: 'Uso',
     rank: 'Posição',
+    aiToolsSection: 'Vitrine de ferramentas IA',
+    browseAll: 'Ver todas',
   },
   zh: {
     releaseDashboard: '发布看板',
@@ -308,6 +320,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: '趋势榜',
     usage: '使用率',
     rank: '排名',
+    aiToolsSection: 'AI 工具精选',
+    browseAll: '查看全部',
   },
   ja: {
     releaseDashboard: 'リリースダッシュボード',
@@ -344,6 +358,8 @@ const TRANSLATIONS = {
     trendingLeaderboard: 'トレンドランキング',
     usage: '利用率',
     rank: '順位',
+    aiToolsSection: 'AIツール特集',
+    browseAll: 'すべて見る',
   },
 };
 
@@ -612,6 +628,8 @@ export default function App() {
       trendingAll: scored,
     };
   }, []);
+
+  const spotlightTools = useMemo(() => TOOLS_CATALOG.slice(0, 8), []);
 
   const openDetail = (item, type) => {
     setSelectedItem(item);
@@ -914,6 +932,23 @@ export default function App() {
                         </div>
                       </div>
                     </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-6 bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">{t('aiToolsSection')}</p>
+                  <button
+                    onClick={() => setActiveView('directory')}
+                    className="text-[11px] px-2 py-1 rounded-full bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors"
+                  >
+                    {t('browseAll')}
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                  {spotlightTools.map((tool) => (
+                    <ToolCard key={tool.id} tool={tool} onClick={() => openDetail(tool, 'tool')} />
                   ))}
                 </div>
               </div>
