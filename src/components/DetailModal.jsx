@@ -13,6 +13,19 @@ import { CategoryBadge } from './CategoryBadge.jsx';
 import { ProviderIcon } from './ProviderIcon.jsx';
 import { CATEGORIES } from '../data/categories.js';
 
+const getLogoUrl = (item) => {
+  if (item.logoUrl) return item.logoUrl;
+  if (item.website || item.url) {
+    try {
+      const host = new URL(item.website || item.url).hostname;
+      return `https://logo.clearbit.com/${host}`;
+    } catch (error) {
+      return null;
+    }
+  }
+  return null;
+};
+
 export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate }) => {
   const [fetching, setFetching] = useState(false);
   const [lastChecked, setLastChecked] = useState(null);
@@ -56,7 +69,13 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
         <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-zinc-800">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
-              <ProviderIcon provider={isTool ? item.vendor : item.provider} size="lg" />
+              {getLogoUrl(item) ? (
+                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center p-2 border border-zinc-200/60">
+                  <img src={getLogoUrl(item)} alt={`${isTool ? item.name : item.product} logo`} className="w-full h-full object-contain" />
+                </div>
+              ) : (
+                <ProviderIcon provider={isTool ? item.vendor : item.provider} size="lg" />
+              )}
               <div>
                 <h2 className="text-2xl font-bold text-white">{isTool ? item.name : item.product}</h2>
                 <div className="flex items-center gap-2 text-zinc-400 mt-1 text-sm">
@@ -227,11 +246,16 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
         </div>
 
         <div className="p-4 md:p-6 border-t border-zinc-800 bg-zinc-900/50 flex justify-end gap-3">
+          {isTool && (
+            <button className="px-4 py-2 text-sm font-medium bg-emerald-500/10 text-emerald-200 rounded-lg border border-emerald-500/30 hover:bg-emerald-500/20 transition-colors">
+              Claim this page
+            </button>
+          )}
           <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white transition-colors">
             Close
           </button>
           <a
-            href={item.url || '#'}
+            href={item.website || item.url || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2 text-sm font-medium bg-white text-black rounded-lg hover:bg-zinc-200 transition-colors flex items-center gap-2"

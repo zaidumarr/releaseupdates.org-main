@@ -6,6 +6,7 @@ export const CURATED_TRENDING = [
     category: 'AI Coding & DevOps',
     description: 'AI coding workspace with Composer agent writing across files.',
     tags: ['coding', 'agents', 'IDE'],
+    website: 'https://cursor.sh',
   },
   {
     name: 'GitHub Copilot',
@@ -13,6 +14,7 @@ export const CURATED_TRENDING = [
     category: 'AI Coding & DevOps',
     description: 'Standard for AI pair-programming inside VS Code and GitHub.',
     tags: ['coding', 'IDE', 'GitHub'],
+    website: 'https://github.com/features/copilot',
   },
   {
     name: 'Replit (with Agent)',
@@ -20,6 +22,7 @@ export const CURATED_TRENDING = [
     category: 'AI Coding & DevOps',
     description: 'Replit AI + Agent that can plan and build full apps.',
     tags: ['coding', 'agent', 'cloud'],
+    website: 'https://replit.com/agent',
   },
   {
     name: 'Claude Code',
@@ -27,6 +30,8 @@ export const CURATED_TRENDING = [
     category: 'AI Coding & DevOps',
     description: 'Terminal-first agent for deep repo reasoning and automation.',
     tags: ['coding', 'terminal', 'agent'],
+    website: 'https://claude.ai',
+    logoUrl: 'https://logo.clearbit.com/anthropic.com',
   },
   {
     name: 'Amazon Q Developer',
@@ -34,6 +39,7 @@ export const CURATED_TRENDING = [
     category: 'AI Coding & DevOps',
     description: 'AWS-focused coding copilot replacing CodeWhisperer.',
     tags: ['AWS', 'coding', 'enterprise'],
+    website: 'https://aws.amazon.com/q/developer/',
   },
   // AI Chatbots / Models
   {
@@ -42,6 +48,7 @@ export const CURATED_TRENDING = [
     category: 'AI Chatbots / Models',
     description: 'Leading general chat assistant with o1 reasoning and 4o speed.',
     tags: ['chat', 'reasoning', 'multimodal'],
+    website: 'https://chat.openai.com',
   },
   {
     name: 'Claude 3.5 Sonnet',
@@ -49,6 +56,8 @@ export const CURATED_TRENDING = [
     category: 'AI Chatbots / Models',
     description: 'High-logic model favored for coding and analysis.',
     tags: ['chat', 'coding', 'analysis'],
+    website: 'https://claude.ai',
+    logoUrl: 'https://logo.clearbit.com/anthropic.com',
   },
   {
     name: 'Gemini Advanced',
@@ -56,6 +65,7 @@ export const CURATED_TRENDING = [
     category: 'AI Chatbots / Models',
     description: 'Google-integrated assistant with massive context window.',
     tags: ['chat', 'google', 'context'],
+    website: 'https://gemini.google.com',
   },
   {
     name: 'Perplexity',
@@ -63,5 +73,6 @@ export const CURATED_TRENDING = [
     category: 'AI Chatbots / Models',
     description: 'Search-style conversational answers with live citations.',
     tags: ['search', 'chat', 'citations'],
+    website: 'https://www.perplexity.ai',
   },
 ];

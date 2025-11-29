@@ -8,6 +8,8 @@ import {
   Workflow,
   BarChart3,
   HeartPulse,
+  Target,
+  Smartphone,
 } from 'lucide-react';
 
 export const CATEGORIES = {
@@ -73,5 +75,26 @@ export const CATEGORIES = {
     color: 'text-red-400',
     bg: 'bg-red-500/10',
     border: 'border-red-500/20',
+  },
+  product: {
+    label: 'Product & Strategy',
+    icon: Target,
+    color: 'text-amber-400',
+    bg: 'bg-amber-500/10',
+    border: 'border-amber-500/20',
+  },
+  marketing: {
+    label: 'Marketing',
+    icon: Briefcase,
+    color: 'text-orange-300',
+    bg: 'bg-orange-500/10',
+    border: 'border-orange-500/20',
+  },
+  mobile: {
+    label: 'Mobile OS',
+    icon: Smartphone,
+    color: 'text-sky-400',
+    bg: 'bg-sky-500/10',
+    border: 'border-sky-500/20',
   },
 };

@@ -40,6 +40,7 @@ import { appId, auth, authToken, db, isFirebaseEnabled } from './services/fireba
 import { MockReleaseService } from './services/mockReleaseService.js';
 import { getTrendingTools } from './services/trendingApi.js';
 import { CURATED_TRENDING } from './data/trending.js';
+import { ProviderIcon } from './components/ProviderIcon.jsx';
 
 const LOCAL_TEST_USER = {
   email: 'zaid5044@gmail.com',
@@ -380,7 +381,7 @@ export default function App() {
   const [syncing, setSyncing] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-  const [activeView, setActiveView] = useState('feed');
+  const [activeView, setActiveView] = useState('home');
   const [activeFilter, setActiveFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -392,6 +393,8 @@ export default function App() {
   const [trendingTools, setTrendingTools] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(false);
   const [trendingCategory, setTrendingCategory] = useState('IT / Dev / AI tools');
+  const [stackVendors, setStackVendors] = useState(new Set());
+  const [sentimentVotes, setSentimentVotes] = useState({});
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -426,6 +429,36 @@ export default function App() {
     return value;
   };
 
+  const LOGO_HOSTS = {
+    OpenAI: 'openai.com',
+    Anthropic: 'anthropic.com',
+    Google: 'google.com',
+    Microsoft: 'microsoft.com',
+    Amazon: 'amazon.com',
+    Anysphere: 'cursor.sh',
+    Replit: 'replit.com',
+    Perplexity: 'perplexity.ai',
+    Stripe: 'stripe.com',
+    Vercel: 'vercel.com',
+  };
+
+  const getLogoUrl = (item) => {
+    if (item?.logoUrl) return item.logoUrl;
+    const hostFromMap = LOGO_HOSTS[item?.vendor] || LOGO_HOSTS[item?.name];
+    if (hostFromMap) {
+      return `https://logo.clearbit.com/${hostFromMap}`;
+    }
+    if (item?.website || item?.url) {
+      try {
+        const host = new URL(item.website || item.url).hostname;
+        return `https://logo.clearbit.com/${host}`;
+      } catch (error) {
+        return null;
+      }
+    }
+    return null;
+  };
+
   const localTrendingAll = useMemo(
     () =>
       CURATED_TRENDING.map((tool, index) => ({
@@ -447,12 +480,29 @@ export default function App() {
 
   const handleViewChange = (view) => {
     setActiveView(view);
-    setActiveFilter('All');
+    if (view === 'home') {
+      setActiveFilter('All');
+    }
     setMobileMenuOpen(false);
   };
 
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
+    setMobileMenuOpen(false);
+  };
+
+  const handleCategorySelect = (category) => {
+    if (category === 'product') {
+      setActiveView('pm');
+    } else {
+      setActiveView('directory');
+    }
+    handleFilterChange(category);
+  };
+
+  const handleAllTools = () => {
+    setActiveView('directory');
+    setActiveFilter('All');
     setMobileMenuOpen(false);
   };
 
@@ -493,6 +543,29 @@ export default function App() {
     setUser({ isAnonymous: true });
     seedLocalData();
     setLoading(false);
+  };
+
+  const toggleStackVendor = (vendor) => {
+    setStackVendors((prev) => {
+      const next = new Set(prev);
+      if (next.has(vendor)) {
+        next.delete(vendor);
+      } else {
+        next.add(vendor);
+      }
+      return next;
+    });
+  };
+
+  const voteSentiment = (id, type) => {
+    setSentimentVotes((prev) => {
+      const current = prev[id] || { hype: 0, meh: 0 };
+      const next = {
+        hype: current.hype + (type === 'hype' ? 1 : 0),
+        meh: current.meh + (type === 'meh' ? 1 : 0),
+      };
+      return { ...prev, [id]: next };
+    });
   };
 
   useEffect(() => {
@@ -664,13 +737,17 @@ export default function App() {
           normalizedTitle.includes(normalizedQuery) ||
           normalizedProduct.includes(normalizedQuery) ||
           normalizedTags.some((tag) => tag.includes(normalizedQuery));
+        const matchesStack = stackVendors.size === 0 || stackVendors.has(release.provider);
         const matchesFilter =
           activeFilter === 'All' ||
           (activeFilter === 'AI Models' && ['OpenAI', 'Google', 'Anthropic'].includes(release.provider)) ||
-          (activeFilter === 'Mobile' && ['Apple', 'Android'].includes(release.provider));
-        return matchesSearch && matchesFilter;
+          (['Mobile', 'mobile'].includes(activeFilter) &&
+            ['Apple', 'Android', 'Microsoft', 'Google', 'Canonical', 'Red Hat', 'Debian', 'Fedora', 'Samsung'].includes(
+              release.provider,
+            ));
+        return matchesSearch && matchesFilter && matchesStack;
       }),
-    [releases, searchQuery, activeFilter],
+    [releases, searchQuery, activeFilter, stackVendors],
   );
 
   const filteredTools = useMemo(
@@ -686,13 +763,50 @@ export default function App() {
           normalizedVendor.includes(normalizedQuery) ||
           normalizedTags.some((tag) => tag.includes(normalizedQuery));
         const matchesCategory = activeFilter === 'All' || tool.category === activeFilter;
-        return matchesSearch && matchesCategory;
+        const matchesStack = stackVendors.size === 0 || stackVendors.has(tool.vendor);
+        return matchesSearch && matchesCategory && matchesStack;
       }),
-    [searchQuery, activeFilter],
+    [searchQuery, activeFilter, stackVendors],
   );
 
   const trendingAll = trendingTools.length ? trendingTools : localTrendingAll;
   const trendingDisplay = trendingAll.slice(0, 10);
+
+  const tickerItems = useMemo(() => {
+    if (releases.length > 0) {
+      return releases.slice(0, 6).map((release) => ({
+        title: release.title || `${release.provider} update`,
+        time: release.date ? new Date(release.date).toLocaleDateString() : 'Just now',
+      }));
+    }
+    return [
+      { title: 'Stripe API v2024-11 released', time: 'Live' },
+      { title: 'Tailwind CSS v4.0 Alpha announced', time: 'Today' },
+      { title: 'Supabase adds Vector Search', time: 'Today' },
+    ];
+  }, [releases]);
+
+  const liveUpdates = useMemo(() => {
+    if (releases.length > 0) {
+      return releases.slice(0, 6).map((release) => ({
+        id: release.id || `${release.provider}-${release.title}`,
+        title: release.title || release.product || 'Release',
+        provider: release.provider || release.product || 'Vendor',
+        date: release.date ? new Date(release.date).toLocaleDateString() : 'Today',
+      }));
+    }
+    return [
+      { id: 'lu1', title: 'GPT-4o mini brings 2x speed boost', provider: 'OpenAI', date: 'Today' },
+      { id: 'lu2', title: 'Claude Code ships repo-aware terminal', provider: 'Anthropic', date: 'Today' },
+      { id: 'lu3', title: 'Cursor Composer rolls out auto-plans', provider: 'Anysphere', date: 'Today' },
+      { id: 'lu4', title: 'Supabase adds vector search', provider: 'Supabase', date: 'Today' },
+      { id: 'lu5', title: 'LangChain launches agents toolkit', provider: 'LangChain', date: 'Today' },
+      { id: 'lu6', title: 'Notion ships native charts', provider: 'Notion', date: 'Today' },
+    ];
+  }, [releases]);
+
+  const featuredRelease = useMemo(() => releases[0] || tickerItems[0], [releases, tickerItems]);
+  const fastestTool = trendingDisplay[0];
 
   const spotlightTools = useMemo(() => TOOLS_CATALOG.slice(0, 8), []);
 
@@ -716,24 +830,13 @@ export default function App() {
           </button>
           <div
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => handleViewChange('feed')}
+            onClick={() => handleViewChange('home')}
           >
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <Zap className="w-5 h-5 text-white fill-current" />
             </div>
             <span className="font-bold text-white tracking-tight hidden sm:block">ReleaseHub</span>
           </div>
-        </div>
-
-        <div className="flex-1 max-w-xl mx-4 relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-          <input
-            type="text"
-            placeholder={t('searchUpdates')}
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-10 pr-4 py-1.5 text-sm text-white focus:outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all placeholder:text-zinc-600"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
-          />
         </div>
 
         <div className="flex items-center gap-3">
@@ -839,47 +942,30 @@ export default function App() {
               <SidebarItem
                 icon={Layout}
                 label={t('releaseFeed')}
-                active={activeView === 'feed'}
-                onClick={() => handleViewChange('feed')}
+                active={activeView === 'home'}
+                onClick={() => handleViewChange('home')}
               />
               <SidebarItem
                 icon={Grid}
                 label={t('toolsDir')}
-                active={activeView === 'directory'}
+                active={activeView === 'directory' || activeView === 'pm'}
                 count={TOOLS_CATALOG.length}
                 onClick={() => handleViewChange('directory')}
               />
             </div>
             <div className="space-y-1">
               <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                {activeView === 'feed' ? t('filterFeed') : t('categories')}
+                {t('categories')}
               </h3>
-              {activeView === 'feed' ? (
-                <>
-                  <SidebarItem
-                    icon={Sparkles}
-                    label={t('aiModels')}
-                    active={activeFilter === 'AI Models'}
-                    onClick={() => handleFilterChange('AI Models')}
-                  />
-                  <SidebarItem
-                    icon={Smartphone}
-                    label={t('mobile')}
-                    active={activeFilter === 'Mobile'}
-                    onClick={() => handleFilterChange('Mobile')}
-                  />
-                </>
-              ) : (
-                Object.entries(CATEGORIES).map(([key, category]) => (
-                  <SidebarItem
-                    key={key}
-                    icon={category.icon}
-                    label={category.label.split('&')[0].trim()}
-                    active={activeFilter === key}
-                    onClick={() => handleFilterChange(key)}
-                  />
-                ))
-              )}
+              {Object.entries(CATEGORIES).map(([key, category]) => (
+                <SidebarItem
+                  key={key}
+                  icon={category.icon}
+                  label={category.label.split('&')[0].trim()}
+                  active={activeFilter === key}
+                  onClick={() => handleCategorySelect(key)}
+                />
+              ))}
             </div>
             <div className="pt-4 border-t border-zinc-800">
               <div className="bg-zinc-900/50 rounded-xl p-4 border border-zinc-800">
@@ -894,29 +980,192 @@ export default function App() {
         </aside>
 
         <main className="flex-1 min-w-0 p-4 md:p-8 overflow-y-auto">
-          <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-end mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-white tracking-tight">
-                {activeView === 'feed' ? t('releaseDashboard') : t('toolsDirectory')}
-              </h1>
-              <p className="text-zinc-500 mt-1">
-                {activeView === 'feed'
-                  ? t('releaseSubtitle')
-                  : t('directorySubtitle', TOOLS_CATALOG.length)}
-              </p>
-            </div>
-            {activeView === 'feed' && (
-              <div className="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                <StatsCard
-                  title={t('updates24h')}
-                  value={releases.filter((release) => new Date(release.date) > new Date(Date.now() - 86400000)).length}
-                  icon={Clock}
-                  trend="+New"
-                />
-                <StatsCard title={t('totalTracked')} value={releases.length} icon={Database} />
+          {activeView === 'home' && (
+            <div className="mb-8 space-y-6">
+              <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
+                <div className="text-xs text-slate-500 uppercase tracking-[0.08em] mb-4 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                  Live view refreshed on load
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+                  {liveUpdates.map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur shadow-inner shadow-black/20"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-semibold text-white truncate">{item.title}</span>
+                        <span className="text-[11px] text-slate-400 shrink-0">{item.date}</span>
+                      </div>
+                      <p className="text-xs text-slate-400">{item.provider}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  <div className="lg:col-span-7 flex flex-col justify-center">
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+                      Don't miss the{' '}
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                        next big update.
+                      </span>
+                    </h1>
+                    <p className="text-slate-400 text-lg mb-6 max-w-xl">
+                      The daily source of truth for software releases, changelogs, and features. Track 500+ tools in one dashboard.
+                    </p>
+
+                    <div className="relative max-w-xl group mb-5">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Search className="h-6 w-6 text-slate-500 group-focus-within:text-blue-500 transition" />
+                      </div>
+                      <input
+                        type="text"
+                        className="block w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition shadow-2xl"
+                        placeholder="Search for a tool (e.g. Cursor, Vercel, Figma)..."
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                      />
+                      <div className="absolute inset-y-0 right-2 flex items-center">
+                        <span className="text-slate-600 text-xs border border-slate-700 px-2 py-1 rounded">⌘K</span>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 flex flex-col gap-3 text-sm text-slate-500">
+                      <div className="flex items-center gap-4 flex-wrap">
+                        <span className="text-xs uppercase tracking-[0.08em] text-slate-400 font-semibold">Track My Stack</span>
+                        <div className="flex gap-2 flex-wrap">
+                          {['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit', 'Vercel', 'Stripe'].map((vendor) => {
+                            const active = stackVendors.has(vendor);
+                            return (
+                              <button
+                                key={vendor}
+                                onClick={() => toggleStackVendor(vendor)}
+                                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                                  active
+                                    ? 'bg-white text-black border-white shadow'
+                                    : 'bg-slate-900 text-slate-300 border-slate-700 hover:border-slate-500'
+                                }`}
+                              >
+                                {vendor}
+                              </button>
+                            );
+                          })}
+                          {stackVendors.size > 0 && (
+                            <button
+                              onClick={() => setStackVendors(new Set())}
+                              className="px-3 py-1.5 rounded-full text-xs font-medium border border-slate-700 text-slate-400 hover:text-white hover:border-slate-500"
+                            >
+                              Clear
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 opacity-70 text-slate-400 flex-wrap">
+                        <span>Tracking updates from:</span>
+                        <div className="flex gap-3 grayscale hover:grayscale-0 transition duration-500 flex-wrap">
+                          <span className="font-bold text-white">Google</span>
+                          <span className="font-bold text-white">Microsoft</span>
+                          <span className="font-bold text-white">AWS</span>
+                          <span className="font-bold text-white">OpenAI</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="lg:col-span-5 grid gap-4">
+                    <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-1 border border-slate-700 hover:border-slate-500 transition group cursor-pointer">
+                      <div className="bg-slate-900 rounded-xl p-6 h-full relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl -mr-10 -mt-10" />
+
+                        <div className="flex justify-between items-start mb-4">
+                          <span className="bg-blue-500/10 text-blue-400 text-[11px] font-bold px-2 py-1 rounded border border-blue-500/20 uppercase tracking-wider">
+                            Featured Release
+                          </span>
+                          <span className="text-slate-400 text-xs">{featuredRelease?.date ? new Date(featuredRelease.date).toLocaleDateString() : 'Today'}</span>
+                        </div>
+
+                        <div className="flex items-center gap-4 mb-3">
+                          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-black font-bold text-xl">
+                            {(featuredRelease?.provider || 'N')[0]}
+                          </div>
+                          <div>
+                            <h3 className="text-white font-bold text-lg truncate">
+                              {featuredRelease?.product || featuredRelease?.name || 'Spotlight Release'}
+                            </h3>
+                            <p className="text-slate-400 text-sm truncate">
+                              {featuredRelease?.title || featuredRelease?.description || 'Fresh drop from the ecosystem.'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="text-slate-400 text-sm mb-4 line-clamp-2">
+                          {featuredRelease?.description || 'Stay ahead with real-time release intel sourced from vendors and live feeds.'}
+                        </p>
+                        <div className="text-blue-400 text-sm font-bold group-hover:translate-x-1 transition flex items-center gap-1">
+                          Read Changelog →
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
+                          <div className="text-xs font-mono text-slate-500 uppercase tracking-widest">Dev Sentiment</div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => voteSentiment(featuredRelease?.id || 'featured', 'hype')}
+                              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 hover:border-orange-500/50 hover:bg-orange-500/10 transition"
+                            >
+                              <span className="text-sm group-hover:scale-110 transition">🔥</span>
+                              <span className="text-xs font-bold text-slate-400 group-hover:text-orange-400">
+                                {(sentimentVotes[featuredRelease?.id || 'featured']?.hype || 420)}
+                              </span>
+                            </button>
+
+                            <button
+                              onClick={() => voteSentiment(featuredRelease?.id || 'featured', 'meh')}
+                              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 border border-slate-700 hover:border-purple-500/50 hover:bg-purple-500/10 transition"
+                            >
+                              <span className="text-sm group-hover:scale-110 transition">🤔</span>
+                              <span className="text-xs font-bold text-slate-400 group-hover:text-purple-400">
+                                {(sentimentVotes[featuredRelease?.id || 'featured']?.meh || 12)}
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex items-center justify-between">
+                      <div>
+                        <div className="text-slate-500 text-[11px] uppercase font-bold mb-1">Fastest Growing</div>
+                        <div className="text-white font-bold text-lg">{fastestTool?.name || 'Cursor'}</div>
+                        <div className="text-emerald-400 text-sm flex items-center gap-1">
+                          <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                          +{fastestTool?._usage || 24}% mentions
+                        </div>
+                      </div>
+                      <div className="flex items-end gap-1 h-10">
+                        <div className="w-2 bg-slate-700 h-4 rounded-t" />
+                        <div className="w-2 bg-slate-700 h-6 rounded-t" />
+                        <div className="w-2 bg-slate-700 h-5 rounded-t" />
+                        <div className="w-2 bg-emerald-500 h-10 rounded-t" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
+
+              {activeView === 'home' && (
+                <div className="flex gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
+                  <StatsCard
+                    title={t('updates24h')}
+                    value={releases.filter((release) => new Date(release.date) > new Date(Date.now() - 86400000)).length}
+                    icon={Clock}
+                    trend="+New"
+                  />
+                  <StatsCard title={t('totalTracked')} value={releases.length} icon={Database} />
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="md:hidden mb-6 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
@@ -932,9 +1181,9 @@ export default function App() {
           <div className="md:hidden space-y-3 mb-6">
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => handleViewChange('feed')}
+                onClick={() => handleViewChange('home')}
                 className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                  activeView === 'feed'
+                  activeView === 'home'
                     ? 'bg-white text-black border-white shadow-lg shadow-indigo-500/10'
                     : 'bg-zinc-900 text-zinc-200 border-zinc-800 hover:border-zinc-700'
                 }`}
@@ -991,7 +1240,7 @@ export default function App() {
                 {[
                   { key: 'All', label: t('allUpdates') },
                   { key: 'AI Models', label: t('aiModels') },
-                  { key: 'Mobile', label: t('mobile') },
+                  { key: 'mobile', label: t('mobile') },
                 ].map((filter) => (
                   <button
                     key={filter.key}
@@ -1016,7 +1265,7 @@ export default function App() {
             </div>
           )}
 
-          {!loading && activeView === 'feed' && (
+          {!loading && activeView === 'home' && (
             <>
               <div className="mb-6 bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
                 <div className="flex items-center justify-between gap-3 mb-3">
@@ -1069,17 +1318,26 @@ export default function App() {
                       onClick={() => openDetail(tool, 'tool')}
                       className="group text-left bg-zinc-950/60 border border-zinc-800 hover:border-indigo-500/30 hover:bg-zinc-900/60 rounded-lg p-3 transition-all flex items-start gap-3"
                     >
-                      <div className="flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-200 font-bold">
+                      <div className="flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-200 font-bold shrink-0">
                         <span className="text-[11px]">{t('rank')} #{tool._rank}</span>
                       </div>
+                      {getLogoUrl(tool) ? (
+                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1 border border-zinc-200/60">
+                          <img src={getLogoUrl(tool)} alt={`${tool.name} logo`} className="w-full h-full object-contain" />
+                        </div>
+                      ) : (
+                        <div className="w-8 h-8">
+                          <ProviderIcon provider={tool.vendor} />
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-sm font-semibold text-white group-hover:text-indigo-100 truncate">{tool.name}</p>
+                          <p className="text-xs font-semibold text-white group-hover:text-indigo-100 truncate leading-snug">{tool.name}</p>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
                             {tool.category}
                           </span>
                         </div>
-                        <p className="text-xs text-zinc-500 mb-1 truncate">{tool.vendor || tool.category || 'Trending'}</p>
+                        <p className="text-[11px] text-zinc-500 mb-1 truncate">{tool.vendor || tool.category || 'Trending'}</p>
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
                           {tool.version || 'Latest'}
@@ -1158,11 +1416,21 @@ export default function App() {
             </>
           )}
 
-          {!loading && activeView === 'directory' && (
+          {!loading && (activeView === 'directory' || activeView === 'pm') && (
             <>
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold text-white tracking-tight">
+                  {activeView === 'pm' ? 'Product & Strategy tools' : t('toolsDirectory')}
+                </h2>
+                <p className="text-zinc-500 text-sm">
+                  {activeView === 'pm'
+                    ? 'Curated stack for product managers, strategy, design, analytics, and AI disruptors.'
+                    : t('directorySubtitle', TOOLS_CATALOG.length)}
+                </p>
+              </div>
               <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
                 <button
-                  onClick={() => setActiveFilter('All')}
+                  onClick={handleAllTools}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border ${
                     activeFilter === 'All'
                       ? 'bg-white text-black border-white'
@@ -1174,7 +1442,7 @@ export default function App() {
                 {Object.entries(CATEGORIES).map(([key, category]) => (
                   <button
                     key={key}
-                    onClick={() => setActiveFilter(key)}
+                    onClick={() => handleCategorySelect(key)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors border ${
                       activeFilter === key
                         ? `${category.bg} ${category.color} ${category.border}`

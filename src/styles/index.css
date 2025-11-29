@@ -76,6 +76,12 @@
   .slide-in-from-left-4 {
     animation-name: slide-in-from-left-4;
   }
+
+  .ticker {
+    display: flex;
+    width: max-content;
+    animation: ticker 25s linear infinite;
+  }
 }
 
 @keyframes fade-in {
@@ -106,5 +112,14 @@
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
