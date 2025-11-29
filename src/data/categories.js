@@ -10,6 +10,7 @@ import {
   HeartPulse,
   Target,
   Smartphone,
+  Compass,
 } from 'lucide-react';
 
 export const CATEGORIES = {
@@ -90,8 +91,15 @@ export const CATEGORIES = {
     bg: 'bg-orange-500/10',
     border: 'border-orange-500/20',
   },
+  browsers: {
+    label: 'Browsers',
+    icon: Compass,
+    color: 'text-sky-300',
+    bg: 'bg-sky-500/10',
+    border: 'border-sky-500/20',
+  },
   mobile: {
-    label: 'Mobile OS',
+    label: 'Operating Systems',
     icon: Smartphone,
     color: 'text-sky-400',
     bg: 'bg-sky-500/10',
