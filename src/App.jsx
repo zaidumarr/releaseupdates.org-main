@@ -390,6 +390,7 @@ export default function App() {
   const [language, setLanguage] = useState('en');
   const [trendingTools, setTrendingTools] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(false);
+  const [trendingCategory, setTrendingCategory] = useState('IT / Dev / AI tools');
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -476,10 +477,10 @@ export default function App() {
       _usage: Math.min(98, Math.max(40, Math.round(60 + (tool.tags?.length || 1) * 3))),
     }));
 
-  const fetchTrending = async () => {
+  const fetchTrending = async (category = trendingCategory) => {
     setTrendingLoading(true);
     try {
-      const tools = await getTrendingTools('IT / Dev / AI tools');
+      const tools = await getTrendingTools(category);
       if (Array.isArray(tools) && tools.length > 0) {
         setTrendingTools(decorateTrending(tools));
       } else {
@@ -696,6 +697,7 @@ export default function App() {
   );
 
   const trendingAll = trendingTools.length ? trendingTools : localTrendingAll;
+  const trendingDisplay = trendingAll.slice(0, 10);
 
   const spotlightTools = useMemo(() => TOOLS_CATALOG.slice(0, 8), []);
 
@@ -1029,13 +1031,44 @@ export default function App() {
                       {t('autoCurated')}
                     </span>
                   </div>
-                  <span className="text-[11px] text-zinc-500">{t('mostMentioned')}</span>
+                  <div className="flex items-center gap-2 flex-wrap justify-end">
+                    <span className="text-[11px] text-zinc-500 hidden sm:inline">{t('mostMentioned')}</span>
+                    <select
+                      value={trendingCategory}
+                      onChange={(event) => setTrendingCategory(event.target.value)}
+                      className="text-xs bg-zinc-900 border border-zinc-800 text-white rounded-lg px-2 py-1 focus:outline-none focus:border-indigo-500/50"
+                    >
+                      {[
+                        'IT / Dev / AI tools',
+                        'AI / DevOps tools',
+                        'AI Models',
+                        'AI Security',
+                        'AI Productivity',
+                      ].map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => fetchTrending(trendingCategory)}
+                      disabled={trendingLoading}
+                      className={`text-[11px] px-3 py-1.5 rounded-lg border flex items-center gap-2 transition-colors ${
+                        trendingLoading
+                          ? 'bg-zinc-800 border-zinc-800 text-zinc-500 cursor-not-allowed'
+                          : 'bg-indigo-600 border-indigo-500 text-white hover:bg-indigo-500'
+                      }`}
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 ${trendingLoading ? 'animate-spin' : ''}`} />
+                      {trendingLoading ? 'Updating' : 'Gemini sync'}
+                    </button>
+                  </div>
                 </div>
                 {trendingLoading && (
                   <div className="text-sm text-zinc-500 mb-3">Refreshing live trends…</div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {trendingAll.map((tool) => (
+                  {trendingDisplay.map((tool) => (
                     <button
                       key={tool.id}
                       onClick={() => openDetail(tool, 'tool')}
@@ -1083,6 +1116,7 @@ export default function App() {
                     </button>
                   ))}
                 </div>
+                <p className="mt-3 text-[11px] text-zinc-500">Showing top 10 results.</p>
               </div>
 
               <div className="mb-6 bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
