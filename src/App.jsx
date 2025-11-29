@@ -1055,7 +1055,7 @@ export default function App() {
                       }`}
                     >
                       <RefreshCw className={`w-3.5 h-3.5 ${trendingLoading ? 'animate-spin' : ''}`} />
-                      {trendingLoading ? 'Updating' : 'Gemini sync'}
+                      {trendingLoading ? 'Updating' : 'Update'}
                     </button>
                   </div>
                 </div>
