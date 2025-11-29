@@ -67,6 +67,7 @@ const TRANSLATIONS = {
     checkUpdates: 'Check Updates',
     syncing: 'Syncing...',
     releaseFeed: 'Release Feed',
+    allUpdates: 'All updates',
     toolsDir: 'Tools Directory',
     filterFeed: 'Filter Feed',
     categories: 'Categories',
@@ -105,6 +106,7 @@ const TRANSLATIONS = {
     checkUpdates: 'Проверить обновления',
     syncing: 'Синхронизация...',
     releaseFeed: 'Лента релизов',
+    allUpdates: 'Все обновления',
     toolsDir: 'Каталог инструментов',
     filterFeed: 'Фильтр ленты',
     categories: 'Категории',
@@ -143,6 +145,7 @@ const TRANSLATIONS = {
     checkUpdates: 'Verifica aggiornamenti',
     syncing: 'Sincronizzazione...',
     releaseFeed: 'Feed Rilasci',
+    allUpdates: 'Tutti gli aggiornamenti',
     toolsDir: 'Directory Strumenti',
     filterFeed: 'Filtra feed',
     categories: 'Categorie',
@@ -181,6 +184,7 @@ const TRANSLATIONS = {
     checkUpdates: 'Vérifier les mises à jour',
     syncing: 'Synchronisation...',
     releaseFeed: 'Flux des versions',
+    allUpdates: 'Toutes les mises à jour',
     toolsDir: 'Annuaire',
     filterFeed: 'Filtrer le flux',
     categories: 'Catégories',
@@ -219,6 +223,7 @@ const TRANSLATIONS = {
     checkUpdates: 'Buscar actualizaciones',
     syncing: 'Sincronizando...',
     releaseFeed: 'Feed de lanzamientos',
+    allUpdates: 'Todas las actualizaciones',
     toolsDir: 'Directorio',
     filterFeed: 'Filtrar feed',
     categories: 'Categorías',
@@ -257,6 +262,7 @@ const TRANSLATIONS = {
     checkUpdates: 'Verificar atualizações',
     syncing: 'Sincronizando...',
     releaseFeed: 'Feed de lançamentos',
+    allUpdates: 'Todas as atualizações',
     toolsDir: 'Diretório',
     filterFeed: 'Filtrar feed',
     categories: 'Categorias',
@@ -295,6 +301,7 @@ const TRANSLATIONS = {
     checkUpdates: '检查更新',
     syncing: '同步中...',
     releaseFeed: '发布动态',
+    allUpdates: '所有更新',
     toolsDir: '工具目录',
     filterFeed: '筛选动态',
     categories: '分类',
@@ -333,6 +340,7 @@ const TRANSLATIONS = {
     checkUpdates: '更新を確認',
     syncing: '同期中...',
     releaseFeed: 'リリースフィード',
+    allUpdates: 'すべてのアップデート',
     toolsDir: 'ツールディレクトリ',
     filterFeed: 'フィードを絞り込み',
     categories: 'カテゴリ',
@@ -380,6 +388,18 @@ export default function App() {
   const localAuthEnabled = !isFirebaseEnabled;
   const [language, setLanguage] = useState('en');
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    return () => {
+      document.body.classList.remove('overflow-hidden');
+    };
+  }, [mobileMenuOpen]);
+
   const t = (key, ...args) => {
     const langPack = TRANSLATIONS[language] || TRANSLATIONS.en;
     const value = langPack[key] ?? TRANSLATIONS.en[key] ?? key;
@@ -396,6 +416,17 @@ export default function App() {
         ...release,
       })),
     );
+  };
+
+  const handleViewChange = (view) => {
+    setActiveView(view);
+    setActiveFilter('All');
+    setMobileMenuOpen(false);
+  };
+
+  const handleFilterChange = (filter) => {
+    setActiveFilter(filter);
+    setMobileMenuOpen(false);
   };
 
   const fallbackToLocal = () => {
@@ -651,10 +682,7 @@ export default function App() {
           </button>
           <div
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => {
-              setActiveView('feed');
-              setActiveFilter('All');
-            }}
+            onClick={() => handleViewChange('feed')}
           >
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <Zap className="w-5 h-5 text-white fill-current" />
@@ -758,6 +786,13 @@ export default function App() {
         </div>
       </header>
 
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-black/60 backdrop-blur-sm md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       <div className="pt-16 flex flex-1 overflow-hidden">
         <aside
           className={`fixed md:sticky top-16 left-0 h-[calc(100vh-64px)] w-64 bg-black border-r border-zinc-800 z-30 transition-transform duration-300 flex flex-col ${
@@ -771,20 +806,14 @@ export default function App() {
                 icon={Layout}
                 label={t('releaseFeed')}
                 active={activeView === 'feed'}
-                onClick={() => {
-                  setActiveView('feed');
-                  setActiveFilter('All');
-                }}
+                onClick={() => handleViewChange('feed')}
               />
               <SidebarItem
                 icon={Grid}
                 label={t('toolsDir')}
                 active={activeView === 'directory'}
                 count={TOOLS_CATALOG.length}
-                onClick={() => {
-                  setActiveView('directory');
-                  setActiveFilter('All');
-                }}
+                onClick={() => handleViewChange('directory')}
               />
             </div>
             <div className="space-y-1">
@@ -797,13 +826,13 @@ export default function App() {
                     icon={Sparkles}
                     label={t('aiModels')}
                     active={activeFilter === 'AI Models'}
-                    onClick={() => setActiveFilter('AI Models')}
+                    onClick={() => handleFilterChange('AI Models')}
                   />
                   <SidebarItem
                     icon={Smartphone}
                     label={t('mobile')}
                     active={activeFilter === 'Mobile'}
-                    onClick={() => setActiveFilter('Mobile')}
+                    onClick={() => handleFilterChange('Mobile')}
                   />
                 </>
               ) : (
@@ -813,7 +842,7 @@ export default function App() {
                     icon={category.icon}
                     label={category.label.split('&')[0].trim()}
                     active={activeFilter === key}
-                    onClick={() => setActiveFilter(key)}
+                    onClick={() => handleFilterChange(key)}
                   />
                 ))
               )}
@@ -866,7 +895,87 @@ export default function App() {
             />
           </div>
 
-              {loading && (
+          <div className="md:hidden space-y-3 mb-6">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => handleViewChange('feed')}
+                className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                  activeView === 'feed'
+                    ? 'bg-white text-black border-white shadow-lg shadow-indigo-500/10'
+                    : 'bg-zinc-900 text-zinc-200 border-zinc-800 hover:border-zinc-700'
+                }`}
+              >
+                <Layout className="w-4 h-4" />
+                {t('releaseFeed')}
+              </button>
+              <button
+                onClick={() => handleViewChange('directory')}
+                className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                  activeView === 'directory'
+                    ? 'bg-white text-black border-white shadow-lg shadow-indigo-500/10'
+                    : 'bg-zinc-900 text-zinc-200 border-zinc-800 hover:border-zinc-700'
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+                {t('toolsDir')}
+              </button>
+            </div>
+
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="text-[11px] uppercase tracking-[0.08em] text-zinc-500 font-semibold mb-1 block">
+                  Lang
+                </label>
+                <select
+                  value={language}
+                  onChange={(event) => setLanguage(event.target.value)}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-white px-3 py-2 focus:outline-none focus:border-indigo-500/50"
+                >
+                  {LANGUAGES.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <button
+                onClick={handleSync}
+                disabled={syncing}
+                className={`h-11 w-12 flex items-center justify-center rounded-lg border transition-all sm:hidden ${
+                  syncing
+                    ? 'bg-zinc-800 border-zinc-800 text-zinc-400 cursor-not-allowed'
+                    : 'bg-indigo-600 border-indigo-500 text-white hover:bg-indigo-500 shadow-lg shadow-indigo-900/20'
+                }`}
+                aria-label={t('checkUpdates')}
+              >
+                <RefreshCw className={`w-4 h-4 ${syncing ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
+            {activeView === 'feed' && (
+              <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                {[
+                  { key: 'All', label: t('allUpdates') },
+                  { key: 'AI Models', label: t('aiModels') },
+                  { key: 'Mobile', label: t('mobile') },
+                ].map((filter) => (
+                  <button
+                    key={filter.key}
+                    onClick={() => handleFilterChange(filter.key)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap border transition-colors ${
+                      activeFilter === filter.key
+                        ? 'bg-white text-black border-white'
+                        : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700'
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {loading && (
             <div className="flex flex-col items-center justify-center py-20">
               <RefreshCw className="w-10 h-10 text-indigo-500 animate-spin mb-4" />
               <p className="text-zinc-500 text-sm">{t('syncingDb')}</p>
@@ -940,7 +1049,7 @@ export default function App() {
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">{t('aiToolsSection')}</p>
                   <button
-                    onClick={() => setActiveView('directory')}
+                    onClick={() => handleViewChange('directory')}
                     className="text-[11px] px-2 py-1 rounded-full bg-white/10 text-white border border-white/20 hover:bg-white/20 transition-colors"
                   >
                     {t('browseAll')}

@@ -26,15 +26,15 @@ export const ReleaseCard = ({ release, onClick }) => (
     <h4 className="text-base font-medium text-zinc-200 mb-2 leading-snug">{release.title}</h4>
     <p className="text-sm text-zinc-400 line-clamp-2 mb-4">{release.description}</p>
 
-    <div className="flex items-center justify-between mt-auto">
-      <div className="flex gap-2">
+    <div className="flex items-center justify-between mt-auto gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap">
         {release.tags?.slice(0, 3).map((tag) => (
           <span key={tag} className="text-[10px] text-zinc-500 bg-zinc-800/50 px-2 py-1 rounded">
             #{tag}
           </span>
         ))}
       </div>
-      <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-300 transition-colors" />
+      <ChevronRight className="w-4 h-4 text-zinc-600 group-hover:text-zinc-300 transition-colors ml-auto" />
     </div>
   </div>
 );

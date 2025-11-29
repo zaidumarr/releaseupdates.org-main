@@ -16,7 +16,7 @@ export const ToolCard = ({ tool, onClick }) => (
       </div>
     </div>
 
-    <div className="flex items-center justify-between gap-2 mb-3">
+    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
       <span className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
         {tool.version || 'Latest'}
       </span>
