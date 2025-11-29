@@ -388,7 +388,7 @@ export default function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const localAuthEnabled = !isFirebaseEnabled;
+  const localAuthEnabled = true;
   const [language, setLanguage] = useState('en');
   const [trendingTools, setTrendingTools] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(false);

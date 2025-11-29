@@ -28,15 +28,21 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false,
         return;
       }
 
-      if (!auth && !isLocalMode) {
-        throw new Error('Authentication is not available.');
-      }
-
       if (mode === 'signup') {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await updateProfile(userCredential.user, { displayName: name });
+        if (!isLocalMode) {
+          if (!auth) throw new Error('Authentication is not available.');
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          await updateProfile(userCredential.user, { displayName: name });
+        } else {
+          await onLocalAuth?.(email, password, name, mode);
+        }
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        if (!isLocalMode) {
+          if (!auth) throw new Error('Authentication is not available.');
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          await onLocalAuth?.(email, password, name, mode);
+        }
       }
       onClose();
     } catch (authError) {
