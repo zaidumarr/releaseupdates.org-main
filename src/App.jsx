@@ -38,6 +38,7 @@ import { SEED_RELEASES } from './data/releases.js';
 import { TOOLS_CATALOG } from './data/tools.js';
 import { appId, auth, authToken, db, isFirebaseEnabled } from './services/firebase.js';
 import { MockReleaseService } from './services/mockReleaseService.js';
+import { getTrendingTools } from './services/trendingApi.js';
 
 const LOCAL_TEST_USER = {
   email: 'zaid5044@gmail.com',
@@ -387,6 +388,8 @@ export default function App() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const localAuthEnabled = !isFirebaseEnabled;
   const [language, setLanguage] = useState('en');
+  const [trendingTools, setTrendingTools] = useState([]);
+  const [trendingLoading, setTrendingLoading] = useState(false);
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -400,6 +403,10 @@ export default function App() {
     };
   }, [mobileMenuOpen]);
 
+  useEffect(() => {
+    fetchTrending();
+  }, []);
+
   const t = (key, ...args) => {
     const langPack = TRANSLATIONS[language] || TRANSLATIONS.en;
     const value = langPack[key] ?? TRANSLATIONS.en[key] ?? key;
@@ -408,6 +415,30 @@ export default function App() {
     }
     return value;
   };
+
+  const localTrendingAll = useMemo(() => {
+    const vendorBoost = new Set(['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit']);
+    const categoryBoost = {
+      coding: 3,
+      automation: 2,
+      data: 2,
+      chatbots: 1,
+    };
+    return [...TOOLS_CATALOG]
+      .map((tool) => {
+        const base = (tool.tags?.length || 0) * 1.5;
+        const vBoost = vendorBoost.has(tool.vendor) ? 3 : 0;
+        const cBoost = categoryBoost[tool.category] || 0;
+        const score = base + vBoost + cBoost;
+        const usage = Math.min(98, Math.round(60 + score * 3));
+        return { ...tool, _score: score, _usage: usage };
+      })
+      .sort((a, b) => {
+        if (b._score === a._score) return b.name.localeCompare(a.name);
+        return b._score - a._score;
+      })
+      .map((tool, index) => ({ ...tool, _rank: index + 1 }));
+  }, []);
 
   const seedLocalData = () => {
     setReleases(
@@ -427,6 +458,39 @@ export default function App() {
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
     setMobileMenuOpen(false);
+  };
+
+  const decorateTrending = (tools) =>
+    (tools || []).map((tool, index) => ({
+      id: tool.id || `${tool.name || 'tool'}-${index}`,
+      name: tool.name || tool.title || 'Untitled tool',
+      category: tool.category || tool.tags?.[0] || 'AI',
+      description: tool.description || tool.summary || 'Trending tool',
+      vendor: tool.vendor || tool.provider || tool.category || 'Trending',
+      website: tool.website || tool.url,
+      pricing: tool.pricing,
+      version: tool.version,
+      tags: tool.tags || [],
+      platforms: tool.platforms || [],
+      _rank: index + 1,
+      _usage: Math.min(98, Math.max(40, Math.round(60 + (tool.tags?.length || 1) * 3))),
+    }));
+
+  const fetchTrending = async () => {
+    setTrendingLoading(true);
+    try {
+      const tools = await getTrendingTools('IT / Dev / AI tools');
+      if (Array.isArray(tools) && tools.length > 0) {
+        setTrendingTools(decorateTrending(tools));
+      } else {
+        setTrendingTools(localTrendingAll);
+      }
+    } catch (error) {
+      console.error('Failed to load trending tools, using fallback.', error);
+      setTrendingTools(localTrendingAll);
+    } finally {
+      setTrendingLoading(false);
+    }
   };
 
   const fallbackToLocal = () => {
@@ -631,34 +695,7 @@ export default function App() {
     [searchQuery, activeFilter],
   );
 
-  const { trendingTop, trendingAll } = useMemo(() => {
-    const vendorBoost = new Set(['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit']);
-    const categoryBoost = {
-      coding: 3,
-      automation: 2,
-      data: 2,
-      chatbots: 1,
-    };
-    const scored = [...TOOLS_CATALOG]
-      .map((tool) => {
-        const base = (tool.tags?.length || 0) * 1.5;
-        const vBoost = vendorBoost.has(tool.vendor) ? 3 : 0;
-        const cBoost = categoryBoost[tool.category] || 0;
-        const score = base + vBoost + cBoost;
-        const usage = Math.min(98, Math.round(60 + score * 3));
-        return { ...tool, _score: score, _usage: usage };
-      })
-      .sort((a, b) => {
-        if (b._score === a._score) return b.name.localeCompare(a.name);
-        return b._score - a._score;
-      })
-      .map((tool, index) => ({ ...tool, _rank: index + 1 }));
-
-    return {
-      trendingTop: scored.slice(0, 8),
-      trendingAll: scored,
-    };
-  }, []);
+  const trendingAll = trendingTools.length ? trendingTools : localTrendingAll;
 
   const spotlightTools = useMemo(() => TOOLS_CATALOG.slice(0, 8), []);
 
@@ -994,6 +1031,9 @@ export default function App() {
                   </div>
                   <span className="text-[11px] text-zinc-500">{t('mostMentioned')}</span>
                 </div>
+                {trendingLoading && (
+                  <div className="text-sm text-zinc-500 mb-3">Refreshing live trends…</div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                   {trendingAll.map((tool) => (
                     <button
@@ -1011,8 +1051,8 @@ export default function App() {
                             {tool.category}
                           </span>
                         </div>
-                        <p className="text-xs text-zinc-500 mb-1 truncate">{tool.vendor}</p>
-                        <div className="flex items-center gap-2 mb-1">
+                        <p className="text-xs text-zinc-500 mb-1 truncate">{tool.vendor || tool.category || 'Trending'}</p>
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
                             {tool.version || 'Latest'}
                           </span>
@@ -1024,7 +1064,7 @@ export default function App() {
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80 mb-1">
-                          {(tool.platforms || []).slice(0, 3).map((platform) => (
+                          {(tool.platforms || tool.tags || []).slice(0, 3).map((platform) => (
                             <span
                               key={platform}
                               className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800"

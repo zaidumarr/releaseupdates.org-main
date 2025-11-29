@@ -16,7 +16,18 @@ A React + Vite single-page dashboard for tracking product releases and exploring
    VITE_AUTH_TOKEN= # optional custom auth token
    ```
 
-3. Start the development server:
+3. (Optional) Enable live trending tools via Gemini:
+   ```bash
+   cp .env.example .env
+   # then set GEMINI_API_KEY=your_real_key_here
+   ```
+   Run the tiny backend alongside Vite:
+   ```bash
+   npm start   # starts Express on :3000 with hourly Gemini refresh
+   npm run dev # Vite proxies /api to :3000 in development
+   ```
+
+4. Start the development server:
    ```bash
    npm run dev
    ```

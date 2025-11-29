@@ -1,0 +1,156 @@
+import express from 'express';
+import dotenv from 'dotenv';
+import cron from 'node-cron';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.warn('Warning: GEMINI_API_KEY not set. /api/trending-tools will return fallback data.');
+}
+
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+
+let cachedTools = [];
+let lastFetched = null;
+
+const withTimeout = (promise, ms) =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('Gemini request timed out')), ms);
+    promise
+      .then((value) => resolve(value))
+      .catch((error) => reject(error))
+      .finally(() => clearTimeout(timer));
+  });
+
+const FALLBACK_TOOLS = [
+  {
+    name: 'OpenAI o1',
+    category: 'AI Models',
+    description: 'Reasoning-first frontier model for complex tasks',
+    website: 'https://openai.com',
+    tags: ['ai', 'models', 'reasoning'],
+  },
+  {
+    name: 'Claude 3.5 Sonnet',
+    category: 'AI Models',
+    description: 'Anthropic’s balanced flag model for coding and analysis',
+    website: 'https://claude.ai',
+    tags: ['ai', 'chat', 'analysis'],
+  },
+  {
+    name: 'Cursor',
+    category: 'Dev Tools',
+    description: 'AI pair-programmer IDE for codebases',
+    website: 'https://cursor.sh',
+    tags: ['devtools', 'ai', 'coding'],
+  },
+  {
+    name: 'Windsurf',
+    category: 'Dev Tools',
+    description: 'AI coding workspace with agentic plans',
+    website: 'https://windsurf.ai',
+    tags: ['devtools', 'agents'],
+  },
+  {
+    name: 'Replit Agent',
+    category: 'Dev Tools',
+    description: 'Autonomous coding agent on Replit infra',
+    website: 'https://replit.com/agent',
+    tags: ['automation', 'coding'],
+  },
+];
+
+const parseJsonResponse = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Gemini JSON parse failed. Raw text:', text);
+    return null;
+  }
+};
+
+const fetchTrendingFromGemini = async (category = 'IT / Dev / AI tools') => {
+  if (!genAI) {
+    return { tools: FALLBACK_TOOLS, source: 'fallback' };
+  }
+
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const prompt = `
+Return ONLY valid JSON.
+
+Give me 20 trending ${category}.
+Each item should be:
+{
+  "name": "string",
+  "category": "string",
+  "description": "short one line",
+  "website": "https://...",
+  "tags": ["tag1","tag2"]
+}
+Respond with: [ { ... }, { ... }, ... ]
+  `;
+
+  const result = await withTimeout(model.generateContent(prompt), 4000);
+  const text = result.response.text().trim();
+  const tools = parseJsonResponse(text);
+  if (!tools || !Array.isArray(tools)) {
+    throw new Error('Gemini returned invalid JSON payload');
+  }
+  return { tools, source: 'gemini' };
+};
+
+app.post('/api/trending-tools', async (req, res) => {
+  try {
+    const { category = 'IT / Dev / AI tools' } = req.body || {};
+    console.log(`[api] POST /api/trending-tools category="${category}"`);
+    const { tools, source } = await fetchTrendingFromGemini(category);
+    cachedTools = tools;
+    lastFetched = new Date();
+    console.log(`[api] served ${tools.length} tools from ${source}`);
+    res.json({ tools, source, lastFetched });
+  } catch (error) {
+    console.error('Trending tools fetch failed:', error);
+    const response = {
+      tools: cachedTools.length ? cachedTools : FALLBACK_TOOLS,
+      source: cachedTools.length ? 'cache' : 'fallback',
+      lastFetched,
+    };
+    res.status(cachedTools.length ? 200 : 500).json(response);
+  }
+});
+
+app.get('/api/trending-tools', async (req, res) => {
+  try {
+    if (cachedTools.length) {
+      return res.json({ tools: cachedTools, source: 'cache', lastFetched });
+    }
+    const { tools, source } = await fetchTrendingFromGemini(req.query.category);
+    cachedTools = tools;
+    lastFetched = new Date();
+    res.json({ tools, source, lastFetched });
+  } catch (error) {
+    console.error('Trending tools fetch failed:', error);
+    res.status(500).json({ tools: FALLBACK_TOOLS, source: 'fallback', lastFetched });
+  }
+});
+
+cron.schedule('0 * * * *', async () => {
+  try {
+    const { tools, source } = await fetchTrendingFromGemini();
+    cachedTools = tools;
+    lastFetched = new Date();
+    console.log(`[cron] Refreshed trending tools from ${source} at ${lastFetched.toISOString()}`);
+  } catch (error) {
+    console.error('[cron] Failed to refresh trending tools', error);
+  }
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
+});
