@@ -395,6 +395,7 @@ export default function App() {
   const [trendingCategory, setTrendingCategory] = useState('IT / Dev / AI tools');
   const [stackVendors, setStackVendors] = useState(new Set());
   const [sentimentVotes, setSentimentVotes] = useState({});
+  const [localUsers, setLocalUsers] = useState([]);
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -407,6 +408,29 @@ export default function App() {
       document.body.classList.remove('overflow-hidden');
     };
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('releasehub.localUsers');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setLocalUsers(parsed.slice(0, 50));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load local users', error);
+    }
+  }, []);
+
+  const persistLocalUsers = (users) => {
+    setLocalUsers(users);
+    try {
+      localStorage.setItem('releasehub.localUsers', JSON.stringify(users.slice(0, 50)));
+    } catch (error) {
+      console.error('Failed to persist local users', error);
+    }
+  };
 
   useEffect(() => {
     // Seed with curated, then try live Gemini fetch
@@ -710,7 +734,12 @@ export default function App() {
     await signInAnonymously(auth);
   };
 
-  const handleLocalAuth = async (email, password) => {
+  const handleLocalAuth = async (email, password, name = '', mode = 'login') => {
+    const MAX_USERS = 50;
+    const normalizedEmail = (email || '').toLowerCase();
+    if (!normalizedEmail || !password) throw new Error('Missing credentials');
+
+    // Seeded test user still works
     if (email === LOCAL_TEST_USER.email && password === LOCAL_TEST_USER.password) {
       setUser({
         isAnonymous: false,
@@ -722,7 +751,43 @@ export default function App() {
       setShowUserMenu(false);
       return;
     }
-    throw new Error('Invalid credentials');
+
+    const existing = localUsers.find((entry) => entry.email === normalizedEmail);
+
+    if (mode === 'signup') {
+      if (localUsers.length >= MAX_USERS) {
+        throw new Error('Local signup limit reached (50 users).');
+      }
+      if (existing) {
+        throw new Error('Email already exists.');
+      }
+      const newUser = {
+        email: normalizedEmail,
+        password,
+        displayName: name || normalizedEmail.split('@')[0],
+      };
+      const nextUsers = [...localUsers, newUser];
+      persistLocalUsers(nextUsers);
+      setUser({
+        isAnonymous: false,
+        displayName: newUser.displayName,
+        email: newUser.email,
+        isLocal: true,
+      });
+    } else {
+      if (!existing || existing.password !== password) {
+        throw new Error('Invalid email or password.');
+      }
+      setUser({
+        isAnonymous: false,
+        displayName: existing.displayName,
+        email: existing.email,
+        isLocal: true,
+      });
+    }
+
+    setIsAuthModalOpen(false);
+    setShowUserMenu(false);
   };
 
   const filteredReleases = useMemo(

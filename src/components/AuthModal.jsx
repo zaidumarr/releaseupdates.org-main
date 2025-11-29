@@ -23,7 +23,7 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false,
 
     try {
       if (isLocalMode && onLocalAuth) {
-        await onLocalAuth(email, password, name);
+        await onLocalAuth(email, password, name, mode);
         onClose();
         return;
       }
