@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GEMNI_TRANSLATION_API || process.env.GEMINI_API_KEY;
   if (!apiKey) {
     res.status(200).json({ translated: text });
     return;

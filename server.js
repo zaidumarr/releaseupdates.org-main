@@ -9,8 +9,12 @@ const app = express();
 app.use(express.json());
 
 const apiKey = process.env.GEMINI_API_KEY;
+const translationKey = process.env.GEMNI_TRANSLATION_API || process.env.GEMINI_API_KEY;
 if (!apiKey) {
   console.warn('Warning: GEMINI_API_KEY not set. /api/trending-tools will return fallback data.');
+}
+if (!translationKey) {
+  console.warn('Warning: GEMNI_TRANSLATION_API not set. /api/translate will echo source text.');
 }
 
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
@@ -145,10 +149,11 @@ app.post('/api/translate', async (req, res) => {
     if (!text || typeof text !== 'string') {
       return res.status(400).json({ error: 'Missing text' });
     }
-    if (!genAI) {
+    if (!translationKey) {
       return res.json({ translated: text });
     }
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const translatorAI = new GoogleGenerativeAI(translationKey);
+    const model = translatorAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     const prompt = `Translate the following text into ${targetLang}. Return ONLY the translated text with no quotes or extra words.\n\n${text}`;
     const result = await withTimeout(model.generateContent(prompt), 5000);
     const translated = result.response.text().trim();
