@@ -14,7 +14,7 @@ const getLogoUrl = (tool) => {
   return null;
 };
 
-export const ToolCard = ({ tool, onClick }) => {
+export const ToolCard = ({ tool, onClick, categoryLabel, t }) => {
   const logoUrl = getLogoUrl(tool);
 
   return (
@@ -34,7 +34,7 @@ export const ToolCard = ({ tool, onClick }) => {
           <div>
             <h3 className="font-bold text-zinc-100 group-hover:text-white flex items-center gap-2">
               <span>{tool.name}</span>
-              <span className="text-[11px] text-zinc-500 font-semibold">v{tool.version || 'Latest'}</span>
+              <span className="text-[11px] text-zinc-500 font-semibold">v{tool.version || t?.('latest') || 'Latest'}</span>
             </h3>
             <p className="text-xs text-zinc-500">{tool.vendor}</p>
           </div>
@@ -43,15 +43,15 @@ export const ToolCard = ({ tool, onClick }) => {
 
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <span className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
-          {tool.version || 'Latest'}
+          {tool.version || t?.('latest') || 'Latest'}
         </span>
         <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
-          {tool.pricing || 'See pricing'}
+          {tool.pricing || t?.('tieredPlans') || 'Tiered plans'}
         </span>
       </div>
 
       <div className="mb-3">
-        <CategoryBadge category={tool.category} />
+        <CategoryBadge category={tool.category} label={categoryLabel} />
       </div>
 
       <p className="text-sm text-zinc-200/80 line-clamp-3 mb-3 flex-grow">{tool.description}</p>

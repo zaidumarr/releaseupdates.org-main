@@ -26,12 +26,20 @@ const getLogoUrl = (item) => {
   return null;
 };
 
-export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate }) => {
+export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t, categoryLabel }) => {
   const [fetching, setFetching] = useState(false);
   const [lastChecked, setLastChecked] = useState(null);
 
   if (!item) return null;
   const isTool = type === 'tool';
+
+  const formatTemplate = (template, replacements) => {
+    if (!template) return '';
+    return Object.entries(replacements || {}).reduce(
+      (acc, [key, value]) => acc.replaceAll(`{${key}}`, value ?? ''),
+      template,
+    );
+  };
 
   const toolReleases = useMemo(() => {
     if (!isTool) return [];
@@ -91,7 +99,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
           </div>
 
           <div className="flex flex-wrap gap-2 mb-6">
-            {isTool ? <CategoryBadge category={item.category} /> : <Badge type={item.type}>{item.type.toUpperCase()}</Badge>}
+            {isTool ? <CategoryBadge category={item.category} label={categoryLabel} /> : <Badge type={item.type}>{item.type.toUpperCase()}</Badge>}
             {item.tags?.map((tag) => (
               <span
                 key={tag}
@@ -108,12 +116,12 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
           </div>
 
           <div className="prose prose-invert max-w-none mb-8">
-            <h3 className="text-lg font-semibold text-zinc-200 mb-2">{isTool ? 'About this Tool' : item.title}</h3>
+            <h3 className="text-lg font-semibold text-zinc-200 mb-2">{isTool ? t?.('aboutTool') || 'About this Tool' : item.title}</h3>
             <p className="text-zinc-400 leading-relaxed text-base">{item.description}</p>
 
             {item.features && item.features.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium text-zinc-300 mb-2">Key Highlights:</h4>
+                <h4 className="text-sm font-medium text-zinc-300 mb-2">{t?.('keyHighlights') || 'Key Highlights:'}</h4>
                 <ul className="space-y-2">
                   {item.features.map((feature, index) => (
                     <li key={feature} className="flex items-start gap-2 text-sm text-zinc-400">
@@ -128,14 +136,20 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
             <div className="mt-6 p-4 bg-zinc-900/50 rounded-lg border border-zinc-800/60">
                 <h4 className="text-sm font-medium text-zinc-300 mb-2 flex items-center gap-2">
                   <Cpu className="w-4 h-4 text-indigo-400" />
-                  {isTool ? 'Research Significance' : 'Release Impact Analysis'}
+                  {isTool ? t?.('researchSignificance') || 'Research Significance' : t?.('releaseImpact') || 'Release Impact Analysis'}
                 </h4>
                 <p className="text-sm text-zinc-500 leading-relaxed">
                   {isTool
-                    ? `${item.name} is a key player in the ${CATEGORIES[item.category]?.label || 'AI'} space. Widely cited in 2025 research for its ${
-                        item.tags?.[0]
+                    ? formatTemplate(t?.('researchSignificanceTool'), {
+                        tool: item.name,
+                        category: CATEGORIES[item.category]?.label || 'AI',
+                        tag: item.tags?.[0] || 'AI',
+                      }) ||
+                      `${item.name} is a key player in the ${CATEGORIES[item.category]?.label || 'AI'} space. Widely cited for ${
+                        item.tags?.[0] || 'AI'
                       } capabilities.`
-                  : 'This update significantly impacts workflows dependent on previous API versions. Recommended for immediate review by DevOps and Engineering teams.'}
+                    : t?.('researchSignificanceRelease') ||
+                      'This update significantly impacts workflows dependent on previous versions. Recommended for immediate review by DevOps and Engineering teams.'}
                 </p>
                 {isTool && (
                   <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-zinc-300">
@@ -169,13 +183,13 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
                     <History className="w-5 h-5 text-zinc-400" />
-                    <h3 className="text-lg font-bold text-white m-0">Latest Updates</h3>
+                    <h3 className="text-lg font-bold text-white m-0">{t?.('latestUpdates') || 'Latest Updates'}</h3>
                   </div>
                   <div className="flex items-center gap-3">
                     {lastChecked && (
                       <span className="text-xs text-emerald-400 flex items-center gap-1">
                         <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-                        Updated {getTimeAgo(lastChecked)}
+                        {(t?.('updatedLabel') || 'Updated')} {getTimeAgo(lastChecked)}
                       </span>
                     )}
                     <button
@@ -184,7 +198,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
                       className="text-xs flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-md transition-all border border-zinc-700"
                     >
                       {fetching ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-                      Check API
+                      {t?.('checkApi') || 'Check API'}
                     </button>
                   </div>
                 </div>
@@ -192,7 +206,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-zinc-800 before:to-transparent">
                   {toolReleases.length === 0 ? (
                     <div className="pl-8 py-2 text-sm text-zinc-500 italic">
-                      No recent updates found in database. Click "Check API" to fetch live data.
+                      {t?.('noUpdatesFound') || 'No recent updates found in database. Click "Check API" to fetch live data.'}
                     </div>
                   ) : (
                     toolReleases.map((release) => {
@@ -252,7 +266,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
             </button>
           )}
           <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white transition-colors">
-            Close
+            {t?.('close') || 'Close'}
           </button>
           <a
             href={item.website || item.url || '#'}
@@ -260,7 +274,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate })
             rel="noopener noreferrer"
             className="px-4 py-2 text-sm font-medium bg-white text-black rounded-lg hover:bg-zinc-200 transition-colors flex items-center gap-2"
           >
-            {isTool ? 'Visit Website' : 'Official Notes'} <ExternalLink className="w-4 h-4" />
+            {isTool ? t?.('visitWebsite') || 'Visit Website' : t?.('officialNotes') || 'Official Notes'} <ExternalLink className="w-4 h-4" />
           </a>
         </div>
       </div>

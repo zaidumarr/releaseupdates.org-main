@@ -98,6 +98,36 @@ const TRANSLATIONS = {
     rank: 'Rank',
     aiToolsSection: 'AI Tools Spotlight',
     browseAll: 'Browse all',
+    research: 'Research',
+    liveViewNote: 'Live view refreshed on load',
+    trackStack: 'Track My Stack',
+    trackingFrom: 'Tracking updates from:',
+    featuredRelease: 'Featured Release',
+    fastestGrowing: 'Fastest Growing',
+    readChangelog: 'Read Changelog',
+    refreshingTrends: 'Refreshing live trends…',
+    heroTitleLead: "Don't miss the",
+    heroTitleHighlight: 'next big update.',
+    heroSubtitle:
+      'The daily source of truth for software releases, changelogs, and features. Track 500+ tools in one dashboard.',
+    heroSearchPlaceholder: 'Search for a tool (e.g. Cursor, Vercel, Figma)...',
+    latest: 'Latest',
+    tieredPlans: 'Tiered plans',
+    researchSignificanceTool:
+      '{tool} is a key player in the {category} space. Widely cited for {tag} capabilities.',
+    researchSignificanceRelease:
+      'This update significantly impacts workflows dependent on previous versions. Recommended for immediate review by DevOps and Engineering teams.',
+    aboutTool: 'About this Tool',
+    keyHighlights: 'Key Highlights:',
+    researchSignificance: 'Research Significance',
+    releaseImpact: 'Release Impact Analysis',
+    latestUpdates: 'Latest Updates',
+    updatedLabel: 'Updated',
+    checkApi: 'Check API',
+    noUpdatesFound: 'No recent updates found in database. Click "Check API" to fetch live data.',
+    close: 'Close',
+    visitWebsite: 'Visit Website',
+    officialNotes: 'Official Notes',
   },
   ru: {
     releaseDashboard: 'Панель релизов',
@@ -137,6 +167,36 @@ const TRANSLATIONS = {
     rank: 'Ранг',
     aiToolsSection: 'Витрина AI инструментов',
     browseAll: 'Смотреть все',
+    research: 'Аналитика',
+    liveViewNote: 'Онлайн-лента обновляется при загрузке',
+    trackStack: 'Отслеживать мой стек',
+    trackingFrom: 'Обновления от:',
+    featuredRelease: 'Главный релиз',
+    fastestGrowing: 'Самый быстрый рост',
+    readChangelog: 'Читать лог изменений',
+    refreshingTrends: 'Обновляем тренды…',
+    heroTitleLead: 'Не пропусти',
+    heroTitleHighlight: 'следующее крупное обновление.',
+    heroSubtitle:
+      'Ежедневный источник правдивых данных о релизах, changelog и функциях. Отслеживаем 500+ инструментов в одной панели.',
+    heroSearchPlaceholder: 'Искать инструмент (например, Cursor, Vercel, Figma)...',
+    latest: 'Последний',
+    tieredPlans: 'Тарифные планы',
+    researchSignificanceTool:
+      '{tool} — важный игрок в сфере {category}. Широко цитируется за возможности {tag}.',
+    researchSignificanceRelease:
+      'Это обновление влияет на процессы, зависящие от предыдущих версий. Рекомендуется срочный обзор командами DevOps и Engineering.',
+    aboutTool: 'Об инструменте',
+    keyHighlights: 'Ключевые особенности:',
+    researchSignificance: 'Значимость для исследований',
+    releaseImpact: 'Анализ влияния релиза',
+    latestUpdates: 'Последние обновления',
+    updatedLabel: 'Обновлено',
+    checkApi: 'Проверить API',
+    noUpdatesFound: 'Нет свежих обновлений в базе. Нажмите «Проверить API», чтобы получить данные.',
+    close: 'Закрыть',
+    visitWebsite: 'Перейти на сайт',
+    officialNotes: 'Официальные заметки',
   },
   it: {
     releaseDashboard: 'Dashboard Rilasci',
@@ -176,6 +236,35 @@ const TRANSLATIONS = {
     rank: 'Posizione',
     aiToolsSection: 'Vetrina AI Tools',
     browseAll: 'Vedi tutto',
+    research: 'Ricerca',
+    liveViewNote: 'Vista live aggiornata al caricamento',
+    trackStack: 'Traccia il mio stack',
+    trackingFrom: 'Aggiornamenti da:',
+    featuredRelease: 'Rilascio in evidenza',
+    fastestGrowing: 'In crescita più rapida',
+    readChangelog: 'Leggi changelog',
+    refreshingTrends: 'Aggiornamento trend…',
+    heroTitleLead: 'Non perdere il',
+    heroTitleHighlight: 'prossimo grande update.',
+    heroSubtitle:
+      'La fonte quotidiana per versioni software, changelog e feature. Traccia oltre 500 tool in un’unica dashboard.',
+    heroSearchPlaceholder: 'Cerca un tool (es. Cursor, Vercel, Figma)...',
+    latest: 'Ultimo',
+    tieredPlans: 'Piani a livelli',
+    researchSignificanceTool: '{tool} è un protagonista nello spazio {category}. Citato spesso per le capacità di {tag}.',
+    researchSignificanceRelease:
+      "Questo update incide sui workflow basati su versioni precedenti. Si raccomanda una revisione immediata da DevOps e Engineering.",
+    aboutTool: 'Informazioni su questo tool',
+    keyHighlights: 'Punti chiave:',
+    researchSignificance: 'Rilevanza per la ricerca',
+    releaseImpact: 'Analisi di impatto del rilascio',
+    latestUpdates: 'Ultimi aggiornamenti',
+    updatedLabel: 'Aggiornato',
+    checkApi: 'Controlla API',
+    noUpdatesFound: 'Nessun aggiornamento recente nel database. Clicca “Controlla API” per ottenere dati live.',
+    close: 'Chiudi',
+    visitWebsite: 'Visita il sito',
+    officialNotes: 'Note ufficiali',
   },
   fr: {
     releaseDashboard: 'Tableau des versions',
@@ -215,6 +304,36 @@ const TRANSLATIONS = {
     rank: 'Rang',
     aiToolsSection: 'Sélection d’outils IA',
     browseAll: 'Voir tout',
+    research: 'Recherche',
+    liveViewNote: 'Vue en direct mise à jour au chargement',
+    trackStack: 'Suivre mon stack',
+    trackingFrom: 'Mises à jour de :',
+    featuredRelease: 'Version mise en avant',
+    fastestGrowing: 'Plus forte croissance',
+    readChangelog: 'Lire le changelog',
+    refreshingTrends: 'Actualisation des tendances…',
+    heroTitleLead: 'Ne manquez pas',
+    heroTitleHighlight: 'la prochaine mise à jour majeure.',
+    heroSubtitle:
+      'La source quotidienne pour les sorties logicielles, changelog et nouveautés. Suivez 500+ outils dans un seul tableau.',
+    heroSearchPlaceholder: 'Rechercher un outil (ex. Cursor, Vercel, Figma)...',
+    latest: 'Dernier',
+    tieredPlans: 'Tarifs échelonnés',
+    researchSignificanceTool:
+      '{tool} est un acteur clé dans le domaine {category}. Souvent cité pour ses capacités {tag}.',
+    researchSignificanceRelease:
+      "Cette mise à jour impacte fortement les workflows dépendants des versions précédentes. Revue immédiate recommandée par les équipes DevOps et Engineering.",
+    aboutTool: 'À propos de cet outil',
+    keyHighlights: 'Points clés :',
+    researchSignificance: 'Importance pour la recherche',
+    releaseImpact: 'Analyse d’impact du release',
+    latestUpdates: 'Dernières mises à jour',
+    updatedLabel: 'Mis à jour',
+    checkApi: 'Vérifier l’API',
+    noUpdatesFound: 'Aucune mise à jour récente. Cliquez sur « Vérifier l’API » pour récupérer des données.',
+    close: 'Fermer',
+    visitWebsite: 'Visiter le site',
+    officialNotes: 'Notes officielles',
   },
   es: {
     releaseDashboard: 'Panel de lanzamientos',
@@ -254,6 +373,36 @@ const TRANSLATIONS = {
     rank: 'Ranking',
     aiToolsSection: 'Escaparate de herramientas IA',
     browseAll: 'Ver todas',
+    research: 'Investigación',
+    liveViewNote: 'Vista en vivo actualizada al cargar',
+    trackStack: 'Seguir mi stack',
+    trackingFrom: 'Actualizaciones de:',
+    featuredRelease: 'Lanzamiento destacado',
+    fastestGrowing: 'Mayor crecimiento',
+    readChangelog: 'Leer changelog',
+    refreshingTrends: 'Actualizando tendencias…',
+    heroTitleLead: 'No te pierdas la',
+    heroTitleHighlight: 'próxima gran actualización.',
+    heroSubtitle:
+      'La fuente diaria para lanzamientos, changelogs y nuevas funciones. Sigue 500+ herramientas en un solo panel.',
+    heroSearchPlaceholder: 'Busca una herramienta (ej. Cursor, Vercel, Figma)...',
+    latest: 'Último',
+    tieredPlans: 'Planes escalonados',
+    researchSignificanceTool:
+      '{tool} es un actor clave en el espacio de {category}. Muy citado por sus capacidades de {tag}.',
+    researchSignificanceRelease:
+      'Esta actualización impacta los flujos de trabajo que dependen de versiones anteriores. Revisión inmediata recomendada por DevOps e Ingeniería.',
+    aboutTool: 'Acerca de esta herramienta',
+    keyHighlights: 'Puntos clave:',
+    researchSignificance: 'Importancia en investigación',
+    releaseImpact: 'Análisis de impacto del lanzamiento',
+    latestUpdates: 'Últimas actualizaciones',
+    updatedLabel: 'Actualizado',
+    checkApi: 'Consultar API',
+    noUpdatesFound: 'No hay actualizaciones recientes. Haz clic en “Consultar API” para traer datos en vivo.',
+    close: 'Cerrar',
+    visitWebsite: 'Visitar sitio',
+    officialNotes: 'Notas oficiales',
   },
   pt: {
     releaseDashboard: 'Painel de lançamentos',
@@ -293,6 +442,36 @@ const TRANSLATIONS = {
     rank: 'Posição',
     aiToolsSection: 'Vitrine de ferramentas IA',
     browseAll: 'Ver todas',
+    research: 'Pesquisa',
+    liveViewNote: 'Visão ao vivo atualizada ao carregar',
+    trackStack: 'Acompanhar meu stack',
+    trackingFrom: 'Atualizações de:',
+    featuredRelease: 'Lançamento em destaque',
+    fastestGrowing: 'Que mais cresce',
+    readChangelog: 'Ler changelog',
+    refreshingTrends: 'Atualizando tendências…',
+    heroTitleLead: 'Não perca a',
+    heroTitleHighlight: 'próxima grande atualização.',
+    heroSubtitle:
+      'A fonte diária para lançamentos de software, changelogs e novidades. Acompanhe 500+ ferramentas em um painel.',
+    heroSearchPlaceholder: 'Busque uma ferramenta (ex. Cursor, Vercel, Figma)...',
+    latest: 'Mais recente',
+    tieredPlans: 'Planos escalonados',
+    researchSignificanceTool:
+      '{tool} é um ator importante em {category}. Amplamente citado pelas capacidades de {tag}.',
+    researchSignificanceRelease:
+      'Esta atualização afeta fluxos dependentes de versões anteriores. Revisão imediata recomendada por DevOps e Engenharia.',
+    aboutTool: 'Sobre esta ferramenta',
+    keyHighlights: 'Destaques:',
+    researchSignificance: 'Relevância para pesquisa',
+    releaseImpact: 'Análise de impacto do release',
+    latestUpdates: 'Últimas atualizações',
+    updatedLabel: 'Atualizado',
+    checkApi: 'Verificar API',
+    noUpdatesFound: 'Nenhuma atualização recente. Clique em “Verificar API” para buscar dados ao vivo.',
+    close: 'Fechar',
+    visitWebsite: 'Visitar site',
+    officialNotes: 'Notas oficiais',
   },
   zh: {
     releaseDashboard: '发布看板',
@@ -332,6 +511,33 @@ const TRANSLATIONS = {
     rank: '排名',
     aiToolsSection: 'AI 工具精选',
     browseAll: '查看全部',
+    research: '研究',
+    liveViewNote: '加载时刷新实时视图',
+    trackStack: '跟踪我的技术栈',
+    trackingFrom: '更新来源：',
+    featuredRelease: '精选发布',
+    fastestGrowing: '增速最快',
+    readChangelog: '查看更新日志',
+    refreshingTrends: '正在刷新趋势…',
+    heroTitleLead: '不要错过',
+    heroTitleHighlight: '下一个重要更新。',
+    heroSubtitle: '每日获取软件发布、更新日志和新功能。一个仪表盘跟踪 500+ 工具。',
+    heroSearchPlaceholder: '搜索工具（如 Cursor, Vercel, Figma）...',
+    latest: '最新',
+    tieredPlans: '分级套餐',
+    researchSignificanceTool: '{tool} 在 {category} 领域是关键参与者，经常因 {tag} 能力被引用。',
+    researchSignificanceRelease: '此更新会影响依赖旧版本的工作流，建议 DevOps 与工程团队立即审核。',
+    aboutTool: '关于此工具',
+    keyHighlights: '关键亮点：',
+    researchSignificance: '研究意义',
+    releaseImpact: '发布影响分析',
+    latestUpdates: '最新更新',
+    updatedLabel: '已更新',
+    checkApi: '检查 API',
+    noUpdatesFound: '数据库中没有最近更新。点击“检查 API”获取实时数据。',
+    close: '关闭',
+    visitWebsite: '访问网站',
+    officialNotes: '官方说明',
   },
   ja: {
     releaseDashboard: 'リリースダッシュボード',
@@ -371,6 +577,33 @@ const TRANSLATIONS = {
     rank: '順位',
     aiToolsSection: 'AIツール特集',
     browseAll: 'すべて見る',
+    research: 'リサーチ',
+    liveViewNote: '読み込み時にライブを更新',
+    trackStack: '自分のスタックを追跡',
+    trackingFrom: '更新元:',
+    featuredRelease: '注目リリース',
+    fastestGrowing: '最速で伸びている',
+    readChangelog: '変更履歴を読む',
+    refreshingTrends: 'トレンドを更新中…',
+    heroTitleLead: '次の',
+    heroTitleHighlight: '大きなアップデートを見逃さないで。',
+    heroSubtitle: 'ソフトウェアリリースやchangelogを毎日確認。500以上のツールを1つのダッシュボードで追跡。',
+    heroSearchPlaceholder: 'ツールを検索 (例: Cursor, Vercel, Figma)...',
+    latest: '最新',
+    tieredPlans: '階層プラン',
+    researchSignificanceTool: '{tool} は {category} 分野の重要プレイヤーで、{tag} 機能でよく引用されます。',
+    researchSignificanceRelease: 'このアップデートは既存バージョンに依存するワークフローに影響します。DevOps/Engineering が早急に確認してください。',
+    aboutTool: 'このツールについて',
+    keyHighlights: '主なポイント:',
+    researchSignificance: 'リサーチ上の重要性',
+    releaseImpact: 'リリース影響分析',
+    latestUpdates: '最新の更新',
+    updatedLabel: '更新',
+    checkApi: 'APIをチェック',
+    noUpdatesFound: '最近の更新はありません。「APIをチェック」を押して最新データを取得してください。',
+    close: '閉じる',
+    visitWebsite: '公式サイト',
+    officialNotes: '公式ノート',
   },
 };
 
@@ -513,6 +746,134 @@ export default function App() {
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
     setMobileMenuOpen(false);
+  };
+
+  const CATEGORY_LABELS = {
+    en: {
+      chatbots: 'Chatbots & Assistants',
+      search: 'Search & Research',
+      coding: 'Coding & Dev Tools',
+      image: 'Image Gen & Design',
+      media: 'Video, Audio & Media',
+      productivity: 'Productivity & Knowledge',
+      automation: 'Automation & Agents',
+      data: 'Data & Enterprise',
+      health: 'HealthTech',
+      product: 'Product & Strategy',
+      marketing: 'Marketing',
+      browsers: 'Browsers',
+      mobile: 'Operating Systems',
+    },
+    ru: {
+      chatbots: 'Чатботы и ассистенты',
+      search: 'Поиск и аналитика',
+      coding: 'Разработка и Dev Tools',
+      image: 'Генерация изображений',
+      media: 'Видео, аудио и медиа',
+      productivity: 'Продуктивность и знания',
+      automation: 'Автоматизация и агенты',
+      data: 'Данные и Enterprise',
+      health: 'HealthTech',
+      product: 'Продукт и стратегия',
+      marketing: 'Маркетинг',
+      browsers: 'Браузеры',
+      mobile: 'Операционные системы',
+    },
+    it: {
+      chatbots: 'Chatbot e assistenti',
+      search: 'Ricerca',
+      coding: 'Coding e Dev Tools',
+      image: 'Immagini e Design',
+      media: 'Video, Audio e Media',
+      productivity: 'Produttività e Knowledge',
+      automation: 'Automazione e Agent',
+      data: 'Dati e Enterprise',
+      health: 'HealthTech',
+      product: 'Prodotto e Strategia',
+      marketing: 'Marketing',
+      browsers: 'Browser',
+      mobile: 'Sistemi operativi',
+    },
+    fr: {
+      chatbots: 'Chatbots et Assistants',
+      search: 'Recherche',
+      coding: 'Dev et Outils',
+      image: 'Génération d’images',
+      media: 'Vidéo, Audio et Media',
+      productivity: 'Productivité et Connaissance',
+      automation: 'Automatisation et Agents',
+      data: 'Données et Entreprise',
+      health: 'HealthTech',
+      product: 'Produit et Stratégie',
+      marketing: 'Marketing',
+      browsers: 'Navigateurs',
+      mobile: 'Systèmes d’exploitation',
+    },
+    es: {
+      chatbots: 'Chatbots y Asistentes',
+      search: 'Búsqueda e Investigación',
+      coding: 'Coding y Dev Tools',
+      image: 'Imagen y Diseño',
+      media: 'Video, Audio y Media',
+      productivity: 'Productividad y Conocimiento',
+      automation: 'Automatización y Agentes',
+      data: 'Datos y Empresa',
+      health: 'HealthTech',
+      product: 'Producto y Estrategia',
+      marketing: 'Marketing',
+      browsers: 'Navegadores',
+      mobile: 'Sistemas operativos',
+    },
+    pt: {
+      chatbots: 'Chatbots e Assistentes',
+      search: 'Busca e Pesquisa',
+      coding: 'Coding e Dev Tools',
+      image: 'Imagens e Design',
+      media: 'Vídeo, Áudio e Media',
+      productivity: 'Produtividade e Conhecimento',
+      automation: 'Automação e Agentes',
+      data: 'Dados e Enterprise',
+      health: 'HealthTech',
+      product: 'Produto e Estratégia',
+      marketing: 'Marketing',
+      browsers: 'Navegadores',
+      mobile: 'Sistemas Operacionais',
+    },
+    zh: {
+      chatbots: '聊天机器人与助手',
+      search: '搜索与研究',
+      coding: '编程与开发工具',
+      image: '图像生成与设计',
+      media: '视频、音频与媒体',
+      productivity: '效率与知识',
+      automation: '自动化与智能体',
+      data: '数据与企业',
+      health: '医疗科技',
+      product: '产品与战略',
+      marketing: '营销',
+      browsers: '浏览器',
+      mobile: '操作系统',
+    },
+    ja: {
+      chatbots: 'チャットボット・アシスタント',
+      search: '検索・リサーチ',
+      coding: 'コーディング・Devツール',
+      image: '画像生成・デザイン',
+      media: '動画・音声・メディア',
+      productivity: '生産性・ナレッジ',
+      automation: '自動化・エージェント',
+      data: 'データ・エンタープライズ',
+      health: 'ヘルステック',
+      product: 'プロダクトと戦略',
+      marketing: 'マーケティング',
+      browsers: 'ブラウザ',
+      mobile: 'オペレーティングシステム',
+    },
+  };
+
+  const getCategoryLabel = (key) => {
+    const labels = CATEGORY_LABELS[language] || CATEGORY_LABELS.en;
+    return labels[key] || CATEGORIES[key]?.label?.split('&')[0]?.trim() || key;
   };
 
   const handleCategorySelect = (category) => {
@@ -1020,13 +1381,13 @@ export default function App() {
             </div>
             <div className="space-y-1">
               <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">
-                {t('categories')}
+                {t('research')}
               </h3>
               {Object.entries(CATEGORIES).map(([key, category]) => (
                 <SidebarItem
                   key={key}
                   icon={category.icon}
-                  label={category.label.split('&')[0].trim()}
+                  label={getCategoryLabel(key)}
                   active={activeFilter === key}
                   onClick={() => handleCategorySelect(key)}
                 />
@@ -1050,7 +1411,7 @@ export default function App() {
               <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.45)]">
                 <div className="text-xs text-slate-500 uppercase tracking-[0.08em] mb-4 flex items-center gap-2">
                   <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                  Live view refreshed on load
+                  {t('liveViewNote')}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
@@ -1070,27 +1431,25 @@ export default function App() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                   <div className="lg:col-span-7 flex flex-col justify-center">
-                    <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
-                      Don't miss the{' '}
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-                        next big update.
-                      </span>
-                    </h1>
-                    <p className="text-slate-400 text-lg mb-6 max-w-xl">
-                      The daily source of truth for software releases, changelogs, and features. Track 500+ tools in one dashboard.
-                    </p>
+                  <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+                    {t('heroTitleLead')}{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                      {t('heroTitleHighlight')}
+                    </span>
+                  </h1>
+                  <p className="text-slate-400 text-lg mb-6 max-w-xl">{t('heroSubtitle')}</p>
 
-                    <div className="relative max-w-xl group mb-5">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Search className="h-6 w-6 text-slate-500 group-focus-within:text-blue-500 transition" />
-                      </div>
-                      <input
-                        type="text"
-                        className="block w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition shadow-2xl"
-                        placeholder="Search for a tool (e.g. Cursor, Vercel, Figma)..."
-                        value={searchQuery}
-                        onChange={(event) => setSearchQuery(event.target.value)}
-                      />
+                  <div className="relative max-w-xl group mb-5">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Search className="h-6 w-6 text-slate-500 group-focus-within:text-blue-500 transition" />
+                    </div>
+                    <input
+                      type="text"
+                      className="block w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition shadow-2xl"
+                      placeholder={t('heroSearchPlaceholder')}
+                      value={searchQuery}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                    />
                       <div className="absolute inset-y-0 right-2 flex items-center">
                         <span className="text-slate-600 text-xs border border-slate-700 px-2 py-1 rounded">⌘K</span>
                       </div>
@@ -1098,7 +1457,7 @@ export default function App() {
 
                     <div className="mt-4 flex flex-col gap-3 text-sm text-slate-500">
                       <div className="flex items-center gap-4 flex-wrap">
-                        <span className="text-xs uppercase tracking-[0.08em] text-slate-400 font-semibold">Track My Stack</span>
+                        <span className="text-xs uppercase tracking-[0.08em] text-slate-400 font-semibold">{t('trackStack')}</span>
                         <div className="flex gap-2 flex-wrap">
                           {['OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Amazon', 'Replit', 'Vercel', 'Stripe'].map((vendor) => {
                             const active = stackVendors.has(vendor);
@@ -1127,7 +1486,7 @@ export default function App() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3 opacity-70 text-slate-400 flex-wrap">
-                        <span>Tracking updates from:</span>
+                        <span>{t('trackingFrom')}</span>
                         <div className="flex gap-3 grayscale hover:grayscale-0 transition duration-500 flex-wrap">
                           <span className="font-bold text-white">Google</span>
                           <span className="font-bold text-white">Microsoft</span>
@@ -1145,7 +1504,7 @@ export default function App() {
 
                         <div className="flex justify-between items-start mb-4">
                           <span className="bg-blue-500/10 text-blue-400 text-[11px] font-bold px-2 py-1 rounded border border-blue-500/20 uppercase tracking-wider">
-                            Featured Release
+                            {t('featuredRelease')}
                           </span>
                           <span className="text-slate-400 text-xs">{featuredRelease?.date ? new Date(featuredRelease.date).toLocaleDateString() : 'Today'}</span>
                         </div>
@@ -1168,7 +1527,7 @@ export default function App() {
                           {featuredRelease?.description || 'Stay ahead with real-time release intel sourced from vendors and live feeds.'}
                         </p>
                         <div className="text-blue-400 text-sm font-bold group-hover:translate-x-1 transition flex items-center gap-1">
-                          Read Changelog →
+                          {t('readChangelog')} →
                         </div>
 
                         <div className="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
@@ -1200,7 +1559,7 @@ export default function App() {
 
                     <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 flex items-center justify-between">
                       <div>
-                        <div className="text-slate-500 text-[11px] uppercase font-bold mb-1">Fastest Growing</div>
+                        <div className="text-slate-500 text-[11px] uppercase font-bold mb-1">{t('fastestGrowing')}</div>
                         <div className="text-white font-bold text-lg">{fastestTool?.name || 'Cursor'}</div>
                         <div className="text-emerald-400 text-sm flex items-center gap-1">
                           <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
@@ -1374,7 +1733,7 @@ export default function App() {
                   </div>
                 </div>
                 {trendingLoading && (
-                  <div className="text-sm text-zinc-500 mb-3">Refreshing live trends…</div>
+                  <div className="text-sm text-zinc-500 mb-3">{t('refreshingTrends')}</div>
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                   {trendingDisplay.map((tool) => (
@@ -1399,7 +1758,7 @@ export default function App() {
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-xs font-semibold text-white group-hover:text-indigo-100 truncate leading-snug">{tool.name}</p>
                           <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
-                            {tool.category}
+                            {getCategoryLabel(tool.category)}
                           </span>
                         </div>
                         <p className="text-[11px] text-zinc-500 mb-1 truncate">{tool.vendor || tool.category || 'Trending'}</p>
@@ -1453,7 +1812,13 @@ export default function App() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                   {spotlightTools.map((tool) => (
-                    <ToolCard key={tool.id} tool={tool} onClick={() => openDetail(tool, 'tool')} />
+                    <ToolCard
+                      key={tool.id}
+                      tool={tool}
+                      t={t}
+                      categoryLabel={getCategoryLabel(tool.category)}
+                      onClick={() => openDetail(tool, 'tool')}
+                    />
                   ))}
                 </div>
               </div>
@@ -1514,7 +1879,7 @@ export default function App() {
                         : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-700'
                     }`}
                   >
-                    {category.label.split('&')[0]}
+                    {getCategoryLabel(key)}
                   </button>
                 ))}
               </div>
@@ -1526,7 +1891,13 @@ export default function App() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {filteredTools.map((tool) => (
-                    <ToolCard key={tool.id} tool={tool} onClick={() => openDetail(tool, 'tool')} />
+                    <ToolCard
+                      key={tool.id}
+                      tool={tool}
+                      t={t}
+                      categoryLabel={getCategoryLabel(tool.category)}
+                      onClick={() => openDetail(tool, 'tool')}
+                    />
                   ))}
                 </div>
               )}
@@ -1550,6 +1921,8 @@ export default function App() {
           type={selectedType}
           allReleases={releases}
           onFetchUpdate={handleToolUpdateFetch}
+          categoryLabel={selectedItem?.category ? getCategoryLabel(selectedItem.category) : undefined}
+          t={t}
           onClose={() => {
             setSelectedItem(null);
             setSelectedType(null);
