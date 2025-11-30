@@ -1816,6 +1816,7 @@ export default function App() {
                       key={tool.id}
                       tool={tool}
                       t={t}
+                      language={language}
                       categoryLabel={getCategoryLabel(tool.category)}
                       onClick={() => openDetail(tool, 'tool')}
                     />
@@ -1923,6 +1924,7 @@ export default function App() {
           onFetchUpdate={handleToolUpdateFetch}
           categoryLabel={selectedItem?.category ? getCategoryLabel(selectedItem.category) : undefined}
           t={t}
+          language={language}
           onClose={() => {
             setSelectedItem(null);
             setSelectedType(null);

@@ -139,6 +139,26 @@ app.get('/api/trending-tools', async (req, res) => {
   }
 });
 
+app.post('/api/translate', async (req, res) => {
+  try {
+    const { text, targetLang = 'en' } = req.body || {};
+    if (!text || typeof text !== 'string') {
+      return res.status(400).json({ error: 'Missing text' });
+    }
+    if (!genAI) {
+      return res.json({ translated: text });
+    }
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const prompt = `Translate the following text into ${targetLang}. Return ONLY the translated text with no quotes or extra words.\n\n${text}`;
+    const result = await withTimeout(model.generateContent(prompt), 5000);
+    const translated = result.response.text().trim();
+    res.json({ translated: translated || text });
+  } catch (error) {
+    console.error('Translation failed:', error);
+    res.status(500).json({ translated: req.body?.text || '', error: 'Translation error' });
+  }
+});
+
 cron.schedule('0 * * * *', async () => {
   try {
     const { tools, source } = await fetchTrendingFromGemini();

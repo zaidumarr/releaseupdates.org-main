@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Cpu,
   ExternalLink,
@@ -12,6 +12,7 @@ import { Badge } from './Badge.jsx';
 import { CategoryBadge } from './CategoryBadge.jsx';
 import { ProviderIcon } from './ProviderIcon.jsx';
 import { CATEGORIES } from '../data/categories.js';
+import { translateText } from '../services/translation.js';
 
 const getLogoUrl = (item) => {
   if (item.logoUrl) return item.logoUrl;
@@ -26,9 +27,10 @@ const getLogoUrl = (item) => {
   return null;
 };
 
-export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t, categoryLabel }) => {
+export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t, categoryLabel, language }) => {
   const [fetching, setFetching] = useState(false);
   const [lastChecked, setLastChecked] = useState(null);
+  const [localizedDescription, setLocalizedDescription] = useState(item?.description);
 
   if (!item) return null;
   const isTool = type === 'tool';
@@ -40,6 +42,22 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
       template,
     );
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (!item?.description || language === 'en') {
+        setLocalizedDescription(item?.description);
+        return;
+      }
+      const translated = await translateText(item.description, language);
+      if (!cancelled) setLocalizedDescription(translated);
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [item?.description, language]);
 
   const toolReleases = useMemo(() => {
     if (!isTool) return [];
@@ -117,7 +135,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
 
           <div className="prose prose-invert max-w-none mb-8">
             <h3 className="text-lg font-semibold text-zinc-200 mb-2">{isTool ? t?.('aboutTool') || 'About this Tool' : item.title}</h3>
-            <p className="text-zinc-400 leading-relaxed text-base">{item.description}</p>
+            <p className="text-zinc-400 leading-relaxed text-base">{localizedDescription}</p>
 
             {item.features && item.features.length > 0 && (
               <div className="mt-4">

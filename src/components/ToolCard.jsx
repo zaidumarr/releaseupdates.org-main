@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { CategoryBadge } from './CategoryBadge.jsx';
 import { ProviderIcon } from './ProviderIcon.jsx';
+import { translateText } from '../services/translation.js';
 
 const getLogoUrl = (tool) => {
   if (tool.logoUrl) return tool.logoUrl;
@@ -14,8 +16,25 @@ const getLogoUrl = (tool) => {
   return null;
 };
 
-export const ToolCard = ({ tool, onClick, categoryLabel, t }) => {
+export const ToolCard = ({ tool, onClick, categoryLabel, t, language }) => {
   const logoUrl = getLogoUrl(tool);
+  const [localizedDescription, setLocalizedDescription] = useState(tool.description);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (language === 'en' || !tool.description) {
+        setLocalizedDescription(tool.description);
+        return;
+      }
+      const translated = await translateText(tool.description, language);
+      if (!cancelled) setLocalizedDescription(translated);
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [language, tool.description]);
 
   return (
     <div
@@ -54,7 +73,7 @@ export const ToolCard = ({ tool, onClick, categoryLabel, t }) => {
         <CategoryBadge category={tool.category} label={categoryLabel} />
       </div>
 
-      <p className="text-sm text-zinc-200/80 line-clamp-3 mb-3 flex-grow">{tool.description}</p>
+      <p className="text-sm text-zinc-200/80 line-clamp-3 mb-3 flex-grow">{localizedDescription}</p>
 
       <div className="flex flex-wrap gap-1.5 mb-3 text-[10px] text-zinc-300/80">
         {(tool.platforms || []).slice(0, 5).map((platform) => (
