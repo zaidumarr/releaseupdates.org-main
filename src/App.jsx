@@ -1364,7 +1364,6 @@ export default function App() {
         >
           <div className="p-4 space-y-6 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-zinc-800">
             <div className="space-y-1">
-              <h3 className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Research</h3>
               <SidebarItem
                 icon={Layout}
                 label={t('releaseFeed')}
