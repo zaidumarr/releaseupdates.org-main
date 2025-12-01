@@ -1440,20 +1440,17 @@ export default function App() {
                   </h1>
                   <p className="text-slate-400 text-lg mb-6 max-w-xl">{t('heroSubtitle')}</p>
 
-                  <div className="relative max-w-xl group mb-5">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Search className="h-6 w-6 text-slate-500 group-focus-within:text-blue-500 transition" />
-                    </div>
-                    <input
-                      type="text"
-                      className="block w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition shadow-2xl"
-                      placeholder={t('heroSearchPlaceholder')}
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                    />
-                      <div className="absolute inset-y-0 right-2 flex items-center">
-                        <span className="text-slate-600 text-xs border border-slate-700 px-2 py-1 rounded">⌘K</span>
+                    <div className="relative max-w-xl group mb-5">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Search className="h-6 w-6 text-slate-500 group-focus-within:text-blue-500 transition" />
                       </div>
+                      <input
+                        type="text"
+                        className="block w-full pl-12 pr-4 py-4 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition shadow-2xl"
+                        placeholder={t('heroSearchPlaceholder')}
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                      />
                     </div>
 
                     <div className="mt-4 flex flex-col gap-3 text-sm text-slate-500">
