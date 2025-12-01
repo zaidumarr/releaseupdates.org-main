@@ -1182,12 +1182,14 @@ export default function App() {
         const normalizedName = tool.name?.toLowerCase() ?? '';
         const normalizedVendor = tool.vendor?.toLowerCase() ?? '';
         const normalizedTags = (tool.tags ?? []).map((tag) => tag.toLowerCase());
+        const normalizedCategoryLabel = getCategoryLabel(tool.category)?.toLowerCase() ?? '';
         const normalizedQuery = searchQuery.toLowerCase();
 
         const matchesSearch =
           normalizedName.includes(normalizedQuery) ||
           normalizedVendor.includes(normalizedQuery) ||
-          normalizedTags.some((tag) => tag.includes(normalizedQuery));
+          normalizedTags.some((tag) => tag.includes(normalizedQuery)) ||
+          normalizedCategoryLabel.includes(normalizedQuery);
         const matchesCategory = activeFilter === 'All' || tool.category === activeFilter;
         const matchesStack = stackVendors.size === 0 || stackVendors.has(tool.vendor);
         return matchesSearch && matchesCategory && matchesStack;
