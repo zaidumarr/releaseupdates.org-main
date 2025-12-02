@@ -1861,6 +1861,16 @@ export default function App() {
                     : t('directorySubtitle', TOOLS_CATALOG.length)}
                 </p>
               </div>
+              <div className="mb-4 max-w-xl relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                <input
+                  type="text"
+                  placeholder={t('search')}
+                  className="w-full bg-zinc-900 border border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:border-indigo-500/50"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
+              </div>
               <div className="mb-6 flex gap-2 overflow-x-auto pb-2 scrollbar-none">
                 <button
                   onClick={handleAllTools}
