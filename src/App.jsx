@@ -1183,13 +1183,17 @@ export default function App() {
         const normalizedVendor = tool.vendor?.toLowerCase() ?? '';
         const normalizedTags = (tool.tags ?? []).map((tag) => tag.toLowerCase());
         const normalizedCategoryLabel = getCategoryLabel(tool.category)?.toLowerCase() ?? '';
+        const normalizedDescription = tool.description?.toLowerCase() ?? '';
+        const normalizedPlatforms = (tool.platforms ?? []).map((p) => p.toLowerCase());
         const normalizedQuery = searchQuery.toLowerCase();
 
         const matchesSearch =
           normalizedName.includes(normalizedQuery) ||
           normalizedVendor.includes(normalizedQuery) ||
           normalizedTags.some((tag) => tag.includes(normalizedQuery)) ||
-          normalizedCategoryLabel.includes(normalizedQuery);
+          normalizedCategoryLabel.includes(normalizedQuery) ||
+          normalizedDescription.includes(normalizedQuery) ||
+          normalizedPlatforms.some((platform) => platform.includes(normalizedQuery));
         const matchesCategory = activeFilter === 'All' || tool.category === activeFilter;
         const matchesStack = stackVendors.size === 0 || stackVendors.has(tool.vendor);
         return matchesSearch && matchesCategory && matchesStack;
