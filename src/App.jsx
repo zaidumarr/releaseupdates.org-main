@@ -773,7 +773,7 @@ export default function App() {
       productivity: 'Продуктивность и знания',
       automation: 'Автоматизация и агенты',
       data: 'Данные и Enterprise',
-      health: 'HealthTech',
+      health: 'Медтех',
       product: 'Продукт и стратегия',
       marketing: 'Маркетинг',
       browsers: 'Браузеры',
