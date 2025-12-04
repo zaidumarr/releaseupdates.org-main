@@ -108,6 +108,9 @@ const TRANSLATIONS = {
     fastestGrowing: 'Fastest Growing',
     readChangelog: 'Read Changelog',
     refreshingTrends: 'Refreshing live trends…',
+    searchesToday: 'Searches today',
+    totalUsers: 'Total users',
+    avgUsers: 'Avg users',
     users: 'Users',
     heroTitleLead: "Don't miss the",
     heroTitleHighlight: 'next big update.',
@@ -968,6 +971,14 @@ export default function App() {
     }
   };
 
+  const formatNumber = (value) => {
+    if (typeof value !== 'number' || Number.isNaN(value)) return '—';
+    if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1).replace(/\\.0$/, '')}B`;
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(/\\.0$/, '')}M`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(/\\.0$/, '')}K`;
+    return value.toLocaleString();
+  };
+
   const fallbackToLocal = () => {
     setUser({ isAnonymous: true });
     seedLocalData();
@@ -1247,6 +1258,15 @@ export default function App() {
 
   const trendingAll = trendingTools.length ? trendingTools : localTrendingAll;
   const trendingDisplay = trendingAll.slice(0, 10);
+  const trendingUsersStats = useMemo(() => {
+    const numericUsers = trendingAll
+      .map((tool) => (typeof tool.users === 'number' ? tool.users : null))
+      .filter((value) => typeof value === 'number' && !Number.isNaN(value));
+    if (!numericUsers.length) return { total: null, average: null, count: 0 };
+    const total = numericUsers.reduce((sum, value) => sum + value, 0);
+    const average = Math.round(total / numericUsers.length);
+    return { total, average, count: numericUsers.length };
+  }, [trendingAll]);
 
   const tickerItems = useMemo(() => {
     if (releases.length > 0) {
@@ -1755,6 +1775,12 @@ export default function App() {
                       <span className="px-2 py-1 text-[11px] rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
                         Source: {trendingMeta.source || 'unknown'}
                       </span>
+                      {trendingUsersStats.total && (
+                        <span className="px-2 py-1 text-[11px] rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-200">
+                          {t('totalUsers')}: {formatNumber(trendingUsersStats.total)}
+                          {trendingUsersStats.average ? ` • ${t('avgUsers')}: ${formatNumber(trendingUsersStats.average)}` : ''}
+                        </span>
+                      )}
                       <select
                         value={trendingCategory}
                         onChange={(event) => setTrendingCategory(event.target.value)}

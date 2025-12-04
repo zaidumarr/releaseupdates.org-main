@@ -68,7 +68,7 @@ export const TrendingRow = ({ tool, rank, onClick, t }) => {
 
       <div className="text-right shrink-0 min-w-[60px]">
         <div className="text-sm font-bold text-zinc-200">{volume}</div>
-        <div className="text-[10px] text-zinc-500">{t?.('searches') || 'mentions'}</div>
+        <div className="text-[10px] text-zinc-500">{t?.('searchesToday') || 'today searches'}</div>
         {usersDisplay && <div className="text-[11px] text-emerald-300 font-semibold">{usersDisplay}</div>}
       </div>
     </div>
