@@ -33,6 +33,7 @@ import { ReleaseCard } from './components/ReleaseCard.jsx';
 import { SidebarItem } from './components/SidebarItem.jsx';
 import { StatsCard } from './components/StatsCard.jsx';
 import { ToolCard } from './components/ToolCard.jsx';
+import { TrendingRow } from './components/TrendingRow.jsx';
 import { CATEGORIES } from './data/categories.js';
 import { SEED_RELEASES } from './data/releases.js';
 import { TOOLS_CATALOG } from './data/tools.js';
@@ -95,6 +96,7 @@ const TRANSLATIONS = {
     offlineDemo: 'Offline demo',
     trendingLeaderboard: 'Trending Leaderboard',
     usage: 'Usage',
+    searches: 'Searches',
     rank: 'Rank',
     aiToolsSection: 'AI Tools Spotlight',
     browseAll: 'Browse all',
@@ -724,6 +726,8 @@ export default function App() {
         ...tool,
         id: tool.id || `${tool.name}-${index}`,
         _rank: index + 1,
+        _usage: Math.floor(Math.random() * 90) + 10,
+        history: Array.from({ length: 10 }, (_, step) => 20 + Math.random() * 80 + step * 2),
       })),
     [],
   );
@@ -906,7 +910,14 @@ export default function App() {
       tags: tool.tags || [],
       platforms: tool.platforms || [],
       _rank: index + 1,
-      _usage: typeof tool._usage === 'number' || typeof tool.usage === 'number' ? tool._usage ?? tool.usage : undefined,
+      _usage:
+        typeof tool._usage === 'number' || typeof tool.usage === 'number'
+          ? tool._usage ?? tool.usage
+          : Math.floor(Math.random() * 90) + 10,
+      history:
+        tool.history && Array.isArray(tool.history) && tool.history.length >= 2
+          ? tool.history
+          : Array.from({ length: 10 }, (_, step) => 20 + Math.random() * 80 + step * 2),
     }));
 
   const formatTrendingUpdated = () => {
@@ -1712,21 +1723,28 @@ export default function App() {
 
           {!loading && activeView === 'home' && (
             <>
-              <div className="mb-6 flex lg:justify-end">
-                <div className="w-full lg:max-w-[480px] bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 md:p-5">
-                  <div className="flex items-center justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-2">
-                      <p className="text-xs uppercase text-zinc-500 tracking-[0.08em] font-semibold">{t('trendingLeaderboard')}</p>
-                      <span className="px-2 py-1 text-[11px] rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
-                        {t('autoCurated')}
+              <div className="mb-8 flex lg:justify-end">
+                <div className="w-full lg:max-w-[640px] bg-zinc-900/20 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl">
+                  <div className="bg-zinc-900/80 backdrop-blur-md p-4 border-b border-zinc-800 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-sm uppercase tracking-wider font-bold text-zinc-400">
+                        {t('trendingLeaderboard')}
+                      </h2>
+                      <span className="flex h-2 w-2 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
                       </span>
+                      <span className="text-[11px] text-zinc-500 hidden sm:inline">{formatTrendingUpdated()}</span>
                     </div>
+
                     <div className="flex items-center gap-2 flex-wrap justify-end">
-                      <span className="text-[11px] text-zinc-500 hidden sm:inline">{t('mostMentioned')}</span>
+                      <span className="px-2 py-1 text-[11px] rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
+                        Source: {trendingMeta.source || 'unknown'}
+                      </span>
                       <select
                         value={trendingCategory}
                         onChange={(event) => setTrendingCategory(event.target.value)}
-                        className="text-xs bg-zinc-900 border border-zinc-800 text-white rounded-lg px-2 py-1 focus:outline-none focus:border-indigo-500/50"
+                        className="text-xs bg-black/50 border border-zinc-700 text-zinc-300 rounded-md px-2 py-1.5 focus:outline-none focus:border-blue-500 focus:text-white transition-colors"
                       >
                         {[
                           'IT / Dev / AI tools',
@@ -1743,89 +1761,32 @@ export default function App() {
                       <button
                         onClick={() => fetchTrending(trendingCategory)}
                         disabled={trendingLoading}
-                        className={`text-[11px] px-3 py-1.5 rounded-lg border flex items-center gap-2 transition-colors ${
-                          trendingLoading
-                            ? 'bg-zinc-800 border-zinc-800 text-zinc-500 cursor-not-allowed'
-                            : 'bg-indigo-600 border-indigo-500 text-white hover:bg-indigo-500'
-                        }`}
+                        className="p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-md transition-colors"
+                        title="Refresh Trends"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${trendingLoading ? 'animate-spin' : ''}`} />
-                        {trendingLoading ? 'Updating' : 'Update'}
                       </button>
                     </div>
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-2">
-                    <span>{formatTrendingUpdated()}</span>
-                    <span className="px-2 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
-                      Source: {trendingMeta.source || 'unknown'}
-                    </span>
+
+                  <div className="divide-y divide-zinc-800/50 bg-black/20">
+                    {trendingLoading ? (
+                      <div className="p-8 text-center text-sm text-zinc-500 animate-pulse">{t('refreshingTrends')}</div>
+                    ) : (
+                      trendingDisplay.map((tool, index) => (
+                        <TrendingRow key={tool.id} tool={tool} rank={index + 1} t={t} onClick={() => openDetail(tool, 'tool')} />
+                      ))
+                    )}
                   </div>
-                  {trendingLoading && (
-                    <div className="text-sm text-zinc-500 mb-3">{t('refreshingTrends')}</div>
-                  )}
-                  <div className="grid grid-cols-1 gap-3">
-                    {trendingDisplay.map((tool) => (
-                      <button
-                        key={tool.id}
-                        onClick={() => openDetail(tool, 'tool')}
-                        className="group text-left bg-zinc-950/60 border border-zinc-800 hover:border-indigo-500/30 hover:bg-zinc-900/60 rounded-lg p-3 transition-all flex items-start gap-3"
-                      >
-                        <div className="flex flex-col items-center justify-center w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-indigo-200 font-bold shrink-0">
-                          <span className="text-[11px]">{t('rank')} #{tool._rank}</span>
-                        </div>
-                        {getLogoUrl(tool) ? (
-                          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1 border border-zinc-200/60">
-                            <img src={getLogoUrl(tool)} alt={`${tool.name} logo`} className="w-full h-full object-contain" />
-                          </div>
-                        ) : (
-                          <div className="w-8 h-8">
-                            <ProviderIcon provider={tool.vendor} />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="text-xs font-semibold text-white group-hover:text-indigo-100 truncate leading-snug">{tool.name}</p>
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-400">
-                              {getCategoryLabel(tool.category)}
-                            </span>
-                          </div>
-                          <p className="text-[11px] text-zinc-500 mb-1 truncate">{tool.vendor || tool.category || 'Trending'}</p>
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
-                            {tool.version || 'Latest'}
-                          </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
-                            {tool.pricing || 'Pricing'}
-                          </span>
-                          {typeof tool._usage === 'number' && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-200 border border-purple-500/20">
-                              {t('usage')}: {tool._usage}%
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-wrap gap-1 text-[10px] text-zinc-300/80 mb-1">
-                          {(tool.platforms || tool.tags || []).slice(0, 3).map((platform) => (
-                            <span
-                              key={platform}
-                                className="px-2 py-0.5 rounded-full bg-zinc-900 border border-zinc-800"
-                              >
-                                {platform}
-                              </span>
-                            ))}
-                          </div>
-                          {typeof tool._usage === 'number' && (
-                            <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-emerald-400"
-                                style={{ width: `${tool._usage}%` }}
-                              />
-                            </div>
-                          )}
-                      </div>
+
+                  <div className="p-3 bg-zinc-900/50 border-t border-zinc-800 text-center">
+                    <button
+                      onClick={() => handleViewChange('directory')}
+                      className="text-xs font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                      {t('browseAll')} →
                     </button>
-                  ))}
-                </div>
-                  <p className="mt-3 text-[11px] text-zinc-500">Showing top 10 results.</p>
+                  </div>
                 </div>
               </div>
 
