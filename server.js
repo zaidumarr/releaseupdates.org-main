@@ -18,6 +18,7 @@ if (!translationKey) {
 }
 
 const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+let geminiBlocked = false;
 
 let cachedTools = [];
 let lastFetched = null;
@@ -79,7 +80,7 @@ const parseJsonResponse = (text) => {
 };
 
 const fetchTrendingFromGemini = async (category = 'IT / Dev / AI tools') => {
-  if (!genAI) {
+  if (!genAI || geminiBlocked) {
     return { tools: FALLBACK_TOOLS, source: 'fallback' };
   }
 
@@ -99,13 +100,25 @@ Each item should be:
 Respond with: [ { ... }, { ... }, ... ]
   `;
 
-  const result = await withTimeout(model.generateContent(prompt), 4000);
-  const text = result.response.text().trim();
-  const tools = parseJsonResponse(text);
-  if (!tools || !Array.isArray(tools)) {
-    throw new Error('Gemini returned invalid JSON payload');
+  try {
+    const result = await withTimeout(model.generateContent(prompt), 4000);
+    const text = result.response.text().trim();
+    const tools = parseJsonResponse(text);
+    if (!tools || !Array.isArray(tools)) {
+      throw new Error('Gemini returned invalid JSON payload');
+    }
+    return { tools, source: 'gemini' };
+  } catch (error) {
+    const message = error?.message || 'Gemini request failed';
+    const isForbidden = error?.status === 403 || /leaked/i.test(message);
+    if (isForbidden) {
+      geminiBlocked = true;
+      console.warn('Gemini API disabled after 403/leak warning. Using fallback data.');
+    } else {
+      console.error('Gemini trending fetch failed:', error);
+    }
+    return { tools: FALLBACK_TOOLS, source: 'fallback' };
   }
-  return { tools, source: 'gemini' };
 };
 
 app.post('/api/trending-tools', async (req, res) => {
@@ -164,7 +177,7 @@ app.post('/api/translate', async (req, res) => {
   }
 });
 
-cron.schedule('0 * * * *', async () => {
+cron.schedule('* * * * *', async () => {
   try {
     const { tools, source } = await fetchTrendingFromGemini();
     cachedTools = tools;

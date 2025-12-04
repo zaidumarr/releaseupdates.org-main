@@ -7,6 +7,7 @@ export const CURATED_TRENDING = [
     description: 'AI coding workspace with Composer agent writing across files.',
     tags: ['coding', 'agents', 'IDE'],
     website: 'https://cursor.sh',
+    users: 1200000,
   },
   {
     name: 'GitHub Copilot',
@@ -15,6 +16,7 @@ export const CURATED_TRENDING = [
     description: 'Standard for AI pair-programming inside VS Code and GitHub.',
     tags: ['coding', 'IDE', 'GitHub'],
     website: 'https://github.com/features/copilot',
+    users: 7000000,
   },
   {
     name: 'Replit (with Agent)',
@@ -23,6 +25,7 @@ export const CURATED_TRENDING = [
     description: 'Replit AI + Agent that can plan and build full apps.',
     tags: ['coding', 'agent', 'cloud'],
     website: 'https://replit.com/agent',
+    users: 3500000,
   },
   {
     name: 'Claude Code',
@@ -32,6 +35,7 @@ export const CURATED_TRENDING = [
     tags: ['coding', 'terminal', 'agent'],
     website: 'https://claude.ai',
     logoUrl: 'https://logo.clearbit.com/anthropic.com',
+    users: 1000000,
   },
   {
     name: 'Amazon Q Developer',
@@ -40,6 +44,7 @@ export const CURATED_TRENDING = [
     description: 'AWS-focused coding copilot replacing CodeWhisperer.',
     tags: ['AWS', 'coding', 'enterprise'],
     website: 'https://aws.amazon.com/q/developer/',
+    users: 850000,
   },
   // AI Chatbots / Models
   {
@@ -49,6 +54,7 @@ export const CURATED_TRENDING = [
     description: 'Leading general chat assistant with o1 reasoning and 4o speed.',
     tags: ['chat', 'reasoning', 'multimodal'],
     website: 'https://chat.openai.com',
+    users: 200000000,
   },
   {
     name: 'Claude 3.5 Sonnet',
@@ -58,6 +64,7 @@ export const CURATED_TRENDING = [
     tags: ['chat', 'coding', 'analysis'],
     website: 'https://claude.ai',
     logoUrl: 'https://logo.clearbit.com/anthropic.com',
+    users: 16000000,
   },
   {
     name: 'Gemini Advanced',
@@ -66,6 +73,7 @@ export const CURATED_TRENDING = [
     description: 'Google-integrated assistant with massive context window.',
     tags: ['chat', 'google', 'context'],
     website: 'https://gemini.google.com',
+    users: 12000000,
   },
   {
     name: 'Perplexity',
@@ -74,5 +82,6 @@ export const CURATED_TRENDING = [
     description: 'Search-style conversational answers with live citations.',
     tags: ['search', 'chat', 'citations'],
     website: 'https://www.perplexity.ai',
+    users: 18000000,
   },
 ];

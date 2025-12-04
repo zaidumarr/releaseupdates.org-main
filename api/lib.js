@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const DEFAULT_CATEGORY = 'IT / Dev / AI tools';
-const CACHE_TTL_MS = 55 * 60 * 1000; // refresh roughly hourly
+const CACHE_TTL_MS = 60 * 1000; // refresh roughly every minute
 const GEMINI_TIMEOUT_MS = 4000;
 
 const FALLBACK_TOOLS = [
@@ -44,6 +44,7 @@ const FALLBACK_TOOLS = [
 
 let cachedTools = [];
 let lastFetched = null;
+let geminiBlocked = false;
 
 const withTimeout = (promise, ms) =>
   new Promise((resolve, reject) => {
@@ -65,8 +66,10 @@ const parseJsonResponse = (text) => {
 
 export const fetchTrendingFromGemini = async (category = DEFAULT_CATEGORY) => {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.warn('GEMINI_API_KEY not set; returning fallback trending tools.');
+  if (!apiKey || geminiBlocked) {
+    if (!apiKey) {
+      console.warn('GEMINI_API_KEY not set; returning fallback trending tools.');
+    }
     return { tools: FALLBACK_TOOLS, source: 'fallback' };
   }
 
@@ -87,13 +90,25 @@ Each item should be:
 Respond with: [ { ... }, { ... }, ... ]
   `;
 
-  const result = await withTimeout(model.generateContent(prompt), GEMINI_TIMEOUT_MS);
-  const text = result.response.text().trim();
-  const tools = parseJsonResponse(text);
-  if (!Array.isArray(tools)) {
-    throw new Error('Gemini returned invalid JSON payload');
+  try {
+    const result = await withTimeout(model.generateContent(prompt), GEMINI_TIMEOUT_MS);
+    const text = result.response.text().trim();
+    const tools = parseJsonResponse(text);
+    if (!Array.isArray(tools)) {
+      throw new Error('Gemini returned invalid JSON payload');
+    }
+    return { tools, source: 'gemini' };
+  } catch (error) {
+    const message = error?.message || 'Gemini request failed';
+    const isForbidden = error?.status === 403 || /leaked/i.test(message);
+    if (isForbidden) {
+      geminiBlocked = true;
+      console.warn('Gemini API disabled after 403/leak warning. Using fallback data.');
+    } else {
+      console.error('Trending tools fetch failed', error);
+    }
+    return { tools: FALLBACK_TOOLS, source: 'fallback' };
   }
-  return { tools, source: 'gemini' };
 };
 
 const isCacheFresh = () => {

@@ -15,12 +15,21 @@ const getLogoUrl = (tool) => {
   return null;
 };
 
+const formatNumber = (value) => {
+  if (typeof value !== 'number' || Number.isNaN(value)) return '—';
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(/\\.0$/, '')}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(/\\.0$/, '')}K`;
+  return value.toLocaleString();
+};
+
 export const TrendingRow = ({ tool, rank, onClick, t }) => {
   const history =
     tool?.history && Array.isArray(tool.history) && tool.history.length >= 2
       ? tool.history
       : Array.from({ length: 10 }, () => 20 + Math.random() * 80);
   const volume = typeof tool?._usage === 'number' ? `${tool._usage}K+` : '10K+';
+  const users = typeof tool?.users === 'number' ? tool.users : undefined;
+  const usersDisplay = users ? `${formatNumber(users)} ${t?.('users') || 'users'}` : null;
   const rankColor = rank === 1 ? 'text-blue-400' : rank <= 3 ? 'text-indigo-400' : 'text-zinc-500';
 
   return (
@@ -60,8 +69,8 @@ export const TrendingRow = ({ tool, rank, onClick, t }) => {
       <div className="text-right shrink-0 min-w-[60px]">
         <div className="text-sm font-bold text-zinc-200">{volume}</div>
         <div className="text-[10px] text-zinc-500">{t?.('searches') || 'mentions'}</div>
+        {usersDisplay && <div className="text-[11px] text-emerald-300 font-semibold">{usersDisplay}</div>}
       </div>
     </div>
   );
 };
-

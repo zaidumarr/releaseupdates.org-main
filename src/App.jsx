@@ -108,6 +108,7 @@ const TRANSLATIONS = {
     fastestGrowing: 'Fastest Growing',
     readChangelog: 'Read Changelog',
     refreshingTrends: 'Refreshing live trends…',
+    users: 'Users',
     heroTitleLead: "Don't miss the",
     heroTitleHighlight: 'next big update.',
     heroSubtitle:
@@ -727,6 +728,7 @@ export default function App() {
         id: tool.id || `${tool.name}-${index}`,
         _rank: index + 1,
         _usage: Math.floor(Math.random() * 90) + 10,
+        users: typeof tool.users === 'number' ? tool.users : Math.floor(50_000 + Math.random() * 950_000),
         history: Array.from({ length: 10 }, (_, step) => 20 + Math.random() * 80 + step * 2),
       })),
     [],
@@ -914,6 +916,14 @@ export default function App() {
         typeof tool._usage === 'number' || typeof tool.usage === 'number'
           ? tool._usage ?? tool.usage
           : Math.floor(Math.random() * 90) + 10,
+      users:
+        typeof tool.users === 'number'
+          ? tool.users
+          : typeof tool.userCount === 'number'
+            ? tool.userCount
+            : typeof tool.usersCount === 'number'
+              ? tool.usersCount
+              : Math.floor(50_000 + Math.random() * 950_000),
       history:
         tool.history && Array.isArray(tool.history) && tool.history.length >= 2
           ? tool.history
