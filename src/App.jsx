@@ -927,8 +927,8 @@ export default function App() {
       })(),
       users: (() => {
         const userNum = parseNumber(tool.users ?? tool.userCount ?? tool.usersCount);
-        if (userNum) return userNum;
-        return Math.floor(50_000 + Math.random() * 950_000);
+        if (userNum !== null && userNum !== undefined && !Number.isNaN(userNum)) return userNum;
+        return null;
       })(),
       history:
         tool.history && Array.isArray(tool.history) && tool.history.length >= 2
