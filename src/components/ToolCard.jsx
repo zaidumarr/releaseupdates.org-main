@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Users } from 'lucide-react';
 import { CategoryBadge } from './CategoryBadge.jsx';
 import { ProviderIcon } from './ProviderIcon.jsx';
 import { translateText } from '../services/translation.js';
@@ -16,9 +17,18 @@ const getLogoUrl = (tool) => {
   return null;
 };
 
-export const ToolCard = ({ tool, onClick, categoryLabel, t, language }) => {
+const formatNumber = (value) => {
+  if (typeof value !== 'number' || Number.isNaN(value)) return null;
+  if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1).replace(/\\.0$/, '')}B`;
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(/\\.0$/, '')}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(/\\.0$/, '')}K`;
+  return value.toLocaleString();
+};
+
+export const ToolCard = ({ tool, onClick, categoryLabel, t, language, userCount }) => {
   const logoUrl = getLogoUrl(tool);
   const [localizedDescription, setLocalizedDescription] = useState(tool.description);
+  const usersDisplay = formatNumber(userCount);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,6 +77,12 @@ export const ToolCard = ({ tool, onClick, categoryLabel, t, language }) => {
         <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">
           {tool.pricing || t?.('tieredPlans') || 'Tiered plans'}
         </span>
+        {usersDisplay && (
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-zinc-800/80 text-emerald-200 border border-emerald-500/30 flex items-center gap-1">
+            <Users className="w-3 h-3" />
+            {usersDisplay} {t?.('users') || 'users'}
+          </span>
+        )}
       </div>
 
       <div className="mb-3">

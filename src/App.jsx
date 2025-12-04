@@ -994,6 +994,14 @@ export default function App() {
     setLoading(false);
   };
 
+  const getToolUsers = (tool) => {
+    const key = `${(tool.vendor || '').toLowerCase()}|${(tool.name || '').toLowerCase()}`;
+    const fromTrending = trendingUsersByKey.get(key);
+    const direct = parseNumber(tool.users ?? tool.userCount ?? tool.usersCount);
+    const numeric = typeof direct === 'number' && !Number.isNaN(direct) ? direct : fromTrending;
+    return typeof numeric === 'number' && !Number.isNaN(numeric) ? numeric : null;
+  };
+
   const toggleStackVendor = (vendor) => {
     setStackVendors((prev) => {
       const next = new Set(prev);
@@ -1276,6 +1284,14 @@ export default function App() {
     const average = Math.round(total / numericUsers.length);
     return { total, average, count: numericUsers.length };
   }, [trendingAll]);
+  const trendingUsersByKey = useMemo(() => {
+    const map = new Map();
+    trendingAll.forEach((tool) => {
+      const key = `${(tool.vendor || '').toLowerCase()}|${(tool.name || '').toLowerCase()}`;
+      map.set(key, tool.users);
+    });
+    return map;
+  }, [trendingAll]);
 
   const tickerItems = useMemo(() => {
     if (releases.length > 0) {
@@ -1316,7 +1332,12 @@ export default function App() {
   const spotlightTools = useMemo(() => TOOLS_CATALOG.slice(0, 8), []);
 
   const openDetail = (item, type) => {
-    setSelectedItem(item);
+    if (type === 'tool') {
+      const users = getToolUsers(item);
+      setSelectedItem(users ? { ...item, users } : item);
+    } else {
+      setSelectedItem(item);
+    }
     setSelectedType(type);
   };
 
@@ -1879,6 +1900,7 @@ export default function App() {
                       key={tool.id}
                       tool={tool}
                       t={t}
+                      userCount={getToolUsers(tool)}
                       language={language}
                       categoryLabel={getCategoryLabel(tool.category)}
                       onClick={() => openDetail(tool, 'tool')}
@@ -1969,6 +1991,7 @@ export default function App() {
                       key={tool.id}
                       tool={tool}
                       t={t}
+                      userCount={getToolUsers(tool)}
                       categoryLabel={getCategoryLabel(tool.category)}
                       onClick={() => openDetail(tool, 'tool')}
                     />

@@ -5,6 +5,7 @@ import {
   History,
   Loader2,
   MonitorSmartphone,
+  Users,
   RefreshCw,
   X,
 } from 'lucide-react';
@@ -25,6 +26,14 @@ const getLogoUrl = (item) => {
     }
   }
   return null;
+};
+
+const formatNumber = (value) => {
+  if (typeof value !== 'number' || Number.isNaN(value)) return null;
+  if (value >= 1_000_000_000) return `${(value / 1_000_000_000).toFixed(1).replace(/\\.0$/, '')}B`;
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1).replace(/\\.0$/, '')}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1).replace(/\\.0$/, '')}K`;
+  return value.toLocaleString();
 };
 
 export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t, categoryLabel, language }) => {
@@ -83,6 +92,8 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
     return 'Today';
   };
 
+  const usersDisplay = isTool && typeof item?.users === 'number' ? formatNumber(item.users) : null;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
@@ -129,6 +140,12 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
             {isTool && item.pricing && (
               <span className="px-2 py-0.5 text-xs font-medium text-emerald-200 bg-emerald-500/10 rounded-full border border-emerald-500/20">
                 {item.pricing}
+              </span>
+            )}
+            {usersDisplay && (
+              <span className="px-2 py-0.5 text-xs font-medium text-emerald-200 bg-emerald-500/10 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                {usersDisplay} {t?.('users') || 'users'}
               </span>
             )}
           </div>
