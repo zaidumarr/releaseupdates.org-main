@@ -1528,6 +1528,30 @@ export default function App() {
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
                       />
+                      {searchQuery && (
+                        <div className="absolute left-0 right-0 mt-2 bg-slate-900/95 border border-slate-800 rounded-xl shadow-2xl p-3 max-h-80 overflow-y-auto space-y-2">
+                          {filteredTools.slice(0, 6).map((tool) => (
+                            <button
+                              key={tool.id}
+                              onClick={() => openDetail(tool, 'tool')}
+                              className="w-full text-left flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-slate-800 transition-colors"
+                            >
+                              <div className="shrink-0">
+                                <ProviderIcon provider={tool.vendor || tool.name} size="md" />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="text-sm font-semibold text-white truncate">{tool.name}</div>
+                                <div className="text-xs text-slate-400 truncate">
+                                  {tool.vendor || 'Vendor'} • {getCategoryLabel(tool.category)}
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                          {filteredTools.length === 0 && (
+                            <div className="text-xs text-slate-400 px-2 py-1.5">No matching tools found.</div>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     <div className="mt-4 flex flex-col gap-3 text-sm text-slate-500">
