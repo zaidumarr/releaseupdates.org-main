@@ -918,18 +918,18 @@ export default function App() {
       tags: tool.tags || [],
       platforms: tool.platforms || [],
       _rank: index + 1,
-      _usage:
-        typeof tool._usage === 'number' || typeof tool.usage === 'number'
-          ? tool._usage ?? tool.usage
-          : Math.floor(Math.random() * 90) + 10,
-      users:
-        typeof tool.users === 'number'
-          ? tool.users
-          : typeof tool.userCount === 'number'
-            ? tool.userCount
-            : typeof tool.usersCount === 'number'
-              ? tool.usersCount
-              : Math.floor(50_000 + Math.random() * 950_000),
+      _usage: (() => {
+        const direct = parseNumber(tool._usage ?? tool.usage);
+        if (direct) return direct;
+        const searches = parseNumber(tool.searches_today ?? tool.searchesToday ?? tool.searches);
+        if (searches) return Math.max(1, Math.round(searches / 1000)); // convert to thousands for display
+        return Math.floor(Math.random() * 90) + 10;
+      })(),
+      users: (() => {
+        const userNum = parseNumber(tool.users ?? tool.userCount ?? tool.usersCount);
+        if (userNum) return userNum;
+        return Math.floor(50_000 + Math.random() * 950_000);
+      })(),
       history:
         tool.history && Array.isArray(tool.history) && tool.history.length >= 2
           ? tool.history
@@ -969,6 +969,15 @@ export default function App() {
     } finally {
       setTrendingLoading(false);
     }
+  };
+
+  const parseNumber = (value) => {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+    if (typeof value === 'string') {
+      const numeric = Number(value.replace(/[^0-9.-]+/g, ''));
+      return Number.isFinite(numeric) ? numeric : null;
+    }
+    return null;
   };
 
   const formatNumber = (value) => {

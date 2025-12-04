@@ -95,7 +95,9 @@ Each item should be:
   "category": "string",
   "description": "short one line",
   "website": "https://...",
-  "tags": ["tag1","tag2"]
+  "tags": ["tag1","tag2"],
+  "users": number, // total or monthly active users, numeric
+  "searches_today": number // estimated searches or mentions today, numeric
 }
 Respond with: [ { ... }, { ... }, ... ]
   `;
