@@ -63,7 +63,7 @@ export const CURATED_TRENDING = [
     description: 'High-logic model favored for coding and analysis.',
     tags: ['chat', 'coding', 'analysis'],
     website: 'https://claude.ai',
-    logoUrl: 'https://logo.clearbit.com/anthropic.com',
+    logoUrl: 'https://assets.releaseupdates.org/logos/anthropic.png',
     users: 16000000,
   },
   {

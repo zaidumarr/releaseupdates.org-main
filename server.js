@@ -46,6 +46,7 @@ const FALLBACK_TOOLS = [
     description: 'Anthropic’s balanced flag model for coding and analysis',
     website: 'https://claude.ai',
     tags: ['ai', 'chat', 'analysis'],
+    logoUrl: 'https://assets.releaseupdates.org/logos/anthropic.png',
   },
   {
     name: 'Cursor',
@@ -60,6 +61,7 @@ const FALLBACK_TOOLS = [
     description: 'AI coding workspace with agentic plans',
     website: 'https://windsurf.ai',
     tags: ['devtools', 'agents'],
+    logoUrl: 'https://assets.releaseupdates.org/logos/windsurf.png',
   },
   {
     name: 'Replit Agent',
