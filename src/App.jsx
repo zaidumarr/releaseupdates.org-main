@@ -626,6 +626,7 @@ export default function App() {
   const [trendingTools, setTrendingTools] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(false);
   const [trendingCategory, setTrendingCategory] = useState('IT / Dev / AI tools');
+  const [trendingMeta, setTrendingMeta] = useState({ lastFetched: null, source: 'fallback' });
   const [stackVendors, setStackVendors] = useState(new Set());
   const [sentimentVotes, setSentimentVotes] = useState({});
   const [localUsers, setLocalUsers] = useState([]);
@@ -674,6 +675,7 @@ export default function App() {
         _rank: index + 1,
       })),
     );
+    setTrendingMeta({ lastFetched: null, source: 'curated' });
     fetchTrending();
   }, []);
 
@@ -907,18 +909,35 @@ export default function App() {
       _usage: typeof tool._usage === 'number' || typeof tool.usage === 'number' ? tool._usage ?? tool.usage : undefined,
     }));
 
+  const formatTrendingUpdated = () => {
+    if (!trendingMeta?.lastFetched) return 'Not updated yet';
+    const parsed = new Date(trendingMeta.lastFetched);
+    if (Number.isNaN(parsed.getTime())) return 'Last updated: unknown';
+    const diffMs = Date.now() - parsed.getTime();
+    if (diffMs < 60_000) return 'Updated just now';
+    const minutes = Math.floor(diffMs / 60_000);
+    if (minutes < 60) return `Updated ${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `Updated ${hours} hour${hours === 1 ? '' : 's'} ago`;
+    const days = Math.floor(hours / 24);
+    return `Updated ${days} day${days === 1 ? '' : 's'} ago`;
+  };
+
   const fetchTrending = async (category = trendingCategory) => {
     setTrendingLoading(true);
     try {
-      const tools = await getTrendingTools(category);
+      const { tools, lastFetched, source } = await getTrendingTools(category);
       if (Array.isArray(tools) && tools.length > 0) {
         setTrendingTools(decorateTrending(tools));
+        setTrendingMeta({ lastFetched, source });
       } else {
         setTrendingTools(localTrendingAll);
+        setTrendingMeta({ lastFetched: null, source: 'fallback' });
       }
     } catch (error) {
       console.error('Failed to load trending tools, using fallback.', error);
       setTrendingTools(localTrendingAll);
+      setTrendingMeta({ lastFetched: null, source: 'fallback' });
     } finally {
       setTrendingLoading(false);
     }
@@ -1734,6 +1753,12 @@ export default function App() {
                         {trendingLoading ? 'Updating' : 'Update'}
                       </button>
                     </div>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-zinc-500 mb-2">
+                    <span>{formatTrendingUpdated()}</span>
+                    <span className="px-2 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
+                      Source: {trendingMeta.source || 'unknown'}
+                    </span>
                   </div>
                   {trendingLoading && (
                     <div className="text-sm text-zinc-500 mb-3">{t('refreshingTrends')}</div>

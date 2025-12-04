@@ -12,5 +12,9 @@ export const getTrendingTools = async (category = 'IT / Dev / AI tools') => {
   }
 
   const data = await response.json();
-  return data.tools || [];
+  return {
+    tools: data.tools || [],
+    lastFetched: data.lastFetched || null,
+    source: data.source || 'unknown',
+  };
 };
