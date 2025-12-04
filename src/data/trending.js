@@ -34,7 +34,7 @@ export const CURATED_TRENDING = [
     description: 'Terminal-first agent for deep repo reasoning and automation.',
     tags: ['coding', 'terminal', 'agent'],
     website: 'https://claude.ai',
-    logoUrl: 'https://logo.clearbit.com/anthropic.com',
+    logoUrl: 'https://assets.releaseupdates.org/logos/anthropic.png',
     users: 1000000,
   },
   {
