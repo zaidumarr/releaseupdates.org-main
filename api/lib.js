@@ -100,11 +100,13 @@ Respond with: [ { ... }, { ... }, ... ]
     geminiBlocked = false;
     return { tools, source: 'gemini', lastFetched: new Date() };
   } catch (error) {
-    const message = error?.message || 'Gemini request failed';
-    const isForbidden = error?.status === 403 || /leaked/i.test(message);
-    if (isForbidden) {
+    const message = (error?.message || '').toLowerCase();
+    const details = (error?.errorDetails || error?.statusText || '').toLowerCase();
+    const isForbidden = error?.status === 403 || message.includes('leaked');
+    const isApiKeyInvalid = message.includes('api key') || message.includes('expired') || details.includes('api key');
+    if (isForbidden || isApiKeyInvalid) {
       geminiBlocked = true;
-      console.warn('Gemini API disabled after 403/leak warning. Using fallback data.');
+      console.warn('Gemini API disabled after key error (forbidden/expired/leak). Using fallback data.');
     } else {
       console.error('Trending tools fetch failed', error);
     }
