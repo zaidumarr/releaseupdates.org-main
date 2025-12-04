@@ -100,10 +100,21 @@ Respond with: [ { ... }, { ... }, ... ]
     geminiBlocked = false;
     return { tools, source: 'gemini', lastFetched: new Date() };
   } catch (error) {
-    const message = (error?.message || '').toLowerCase();
-    const details = (error?.errorDetails || error?.statusText || '').toLowerCase();
+    const normalize = (value) => {
+      if (!value) return '';
+      if (typeof value === 'string') return value.toLowerCase();
+      try {
+        return JSON.stringify(value).toLowerCase();
+      } catch {
+        return String(value).toLowerCase();
+      }
+    };
+
+    const message = normalize(error?.message);
+    const details = normalize(error?.errorDetails || error?.statusText);
     const isForbidden = error?.status === 403 || message.includes('leaked');
-    const isApiKeyInvalid = message.includes('api key') || message.includes('expired') || details.includes('api key');
+    const isApiKeyInvalid =
+      message.includes('api key') || message.includes('expired') || details.includes('api key');
     if (isForbidden || isApiKeyInvalid) {
       geminiBlocked = true;
       console.warn('Gemini API disabled after key error (forbidden/expired/leak). Using fallback data.');
