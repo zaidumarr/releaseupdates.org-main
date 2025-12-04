@@ -735,10 +735,13 @@ export default function App() {
   );
 
   const seedLocalData = () => {
+    const now = Date.now();
     setReleases(
       SEED_RELEASES.map((release, index) => ({
         id: release.id ?? `${release.provider}-${release.product}-${index}`,
         ...release,
+        // Make fallback releases feel fresh when running without Firebase/live data
+        date: new Date(now - index * 2 * 60 * 60 * 1000).toISOString(),
       })),
     );
   };
@@ -948,17 +951,18 @@ export default function App() {
     setTrendingLoading(true);
     try {
       const { tools, lastFetched, source } = await getTrendingTools(category);
+      const fallbackTimestamp = new Date().toISOString();
       if (Array.isArray(tools) && tools.length > 0) {
         setTrendingTools(decorateTrending(tools));
-        setTrendingMeta({ lastFetched, source });
+        setTrendingMeta({ lastFetched: lastFetched || fallbackTimestamp, source });
       } else {
         setTrendingTools(localTrendingAll);
-        setTrendingMeta({ lastFetched: null, source: 'fallback' });
+        setTrendingMeta({ lastFetched: fallbackTimestamp, source: 'fallback' });
       }
     } catch (error) {
       console.error('Failed to load trending tools, using fallback.', error);
       setTrendingTools(localTrendingAll);
-      setTrendingMeta({ lastFetched: null, source: 'fallback' });
+      setTrendingMeta({ lastFetched: new Date().toISOString(), source: 'fallback' });
     } finally {
       setTrendingLoading(false);
     }

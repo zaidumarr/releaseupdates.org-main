@@ -70,7 +70,7 @@ export const fetchTrendingFromGemini = async (category = DEFAULT_CATEGORY) => {
     if (!apiKey) {
       console.warn('GEMINI_API_KEY not set; returning fallback trending tools.');
     }
-    return { tools: FALLBACK_TOOLS, source: 'fallback' };
+    return { tools: FALLBACK_TOOLS, source: 'fallback', lastFetched: new Date() };
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -97,7 +97,8 @@ Respond with: [ { ... }, { ... }, ... ]
     if (!Array.isArray(tools)) {
       throw new Error('Gemini returned invalid JSON payload');
     }
-    return { tools, source: 'gemini' };
+    geminiBlocked = false;
+    return { tools, source: 'gemini', lastFetched: new Date() };
   } catch (error) {
     const message = error?.message || 'Gemini request failed';
     const isForbidden = error?.status === 403 || /leaked/i.test(message);
@@ -107,7 +108,7 @@ Respond with: [ { ... }, { ... }, ... ]
     } else {
       console.error('Trending tools fetch failed', error);
     }
-    return { tools: FALLBACK_TOOLS, source: 'fallback' };
+    return { tools: FALLBACK_TOOLS, source: 'fallback', lastFetched: new Date() };
   }
 };
 
@@ -143,7 +144,7 @@ export const getTrendingToolsResponse = async (
     if (cachedTools.length) {
       return { tools: cachedTools, source: 'cache', lastFetched };
     }
-    return { tools: FALLBACK_TOOLS, source: 'fallback', lastFetched: null };
+    return { tools: FALLBACK_TOOLS, source: 'fallback', lastFetched: new Date() };
   }
 };
 
@@ -155,4 +156,4 @@ export const getTrendingState = () => ({
   lastFetched,
 });
 
-export const FALLBACK_RESPONSE = { tools: FALLBACK_TOOLS, source: 'fallback', lastFetched: null };
+export const FALLBACK_RESPONSE = { tools: FALLBACK_TOOLS, source: 'fallback', lastFetched: new Date() };

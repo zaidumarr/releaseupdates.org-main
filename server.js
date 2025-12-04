@@ -107,6 +107,7 @@ Respond with: [ { ... }, { ... }, ... ]
     if (!tools || !Array.isArray(tools)) {
       throw new Error('Gemini returned invalid JSON payload');
     }
+    geminiBlocked = false;
     return { tools, source: 'gemini' };
   } catch (error) {
     const message = error?.message || 'Gemini request failed';
