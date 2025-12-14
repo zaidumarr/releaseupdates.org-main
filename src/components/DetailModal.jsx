@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  Archive,
   Cpu,
   ExternalLink,
   History,
@@ -70,13 +71,36 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
 
   const toolReleases = useMemo(() => {
     if (!isTool) return [];
+    const normalizedName = (item?.name || '').toLowerCase();
+    const normalizedVendor = (item?.vendor || '').toLowerCase();
     return allReleases
-      .filter(
-        (release) =>
-          release.product === item.name || release.provider === item.vendor || release.title.includes(item.name),
-      )
+      .filter((release) => {
+        const product = (release.product || '').toLowerCase();
+        const provider = (release.provider || '').toLowerCase();
+        const title = (release.title || '').toLowerCase();
+        return (
+          (normalizedName && product === normalizedName) ||
+          (normalizedVendor && provider === normalizedVendor) ||
+          (normalizedName && title.includes(normalizedName))
+        );
+      })
       .sort((a, b) => new Date(b.date) - new Date(a.date));
-  }, [allReleases, item, isTool]);
+  }, [allReleases, item?.name, item?.vendor, isTool]);
+
+  const { latestReleases, archivedReleases } = useMemo(() => {
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    const latest = [];
+    const archived = [];
+    toolReleases.forEach((release) => {
+      const timestamp = new Date(release?.date || 0).getTime();
+      if (Number.isFinite(timestamp) && timestamp >= cutoff) {
+        latest.push(release);
+      } else {
+        archived.push(release);
+      }
+    });
+    return { latestReleases: latest, archivedReleases: archived };
+  }, [toolReleases]);
 
   const handleFetch = async () => {
     setFetching(true);
@@ -90,6 +114,15 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
     if (diff < 1) return 'Just now';
     if (diff < 60) return `${diff}m ago`;
     return 'Today';
+  };
+
+  const summarizeRelease = (release) => {
+    if (!release) return '';
+    const description = release.description?.trim() || '';
+    const features = Array.isArray(release.features) ? release.features.filter(Boolean) : [];
+    const featureSummary = features.length ? features.slice(0, 3).join(' • ') : '';
+    if (description && featureSummary) return `${description} — ${featureSummary}`;
+    return description || featureSummary || 'No summary provided.';
   };
 
   const usersDisplay = isTool && typeof item?.users === 'number' ? formatNumber(item.users) : null;
@@ -216,9 +249,16 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
             {isTool && (
               <div className="mt-10 border-t border-zinc-800 pt-6">
                 <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <History className="w-5 h-5 text-zinc-400" />
-                    <h3 className="text-lg font-bold text-white m-0">{t?.('latestUpdates') || 'Latest Updates'}</h3>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <History className="w-5 h-5 text-zinc-400" />
+                      <h3 className="text-lg font-bold text-white m-0">
+                        {t?.('latest24hTitle') || t?.('latestUpdates') || 'Latest from last 24 hours'}
+                      </h3>
+                    </div>
+                    <p className="text-xs text-zinc-500 m-0">
+                      {t?.('archiveHelper') || 'Fresh drops from the last day. Older releases stay archived below.'}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     {lastChecked && (
@@ -233,18 +273,18 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
                       className="text-xs flex items-center gap-2 px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-md transition-all border border-zinc-700"
                     >
                       {fetching ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-                      {t?.('checkApi') || 'Check API'}
+                      {t?.('latestUpdatesAction') || t?.('latestUpdates') || 'Latest Updates'}
                     </button>
                   </div>
                 </div>
 
                 <div className="space-y-6 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-zinc-800 before:to-transparent">
-                  {toolReleases.length === 0 ? (
+                  {latestReleases.length === 0 ? (
                     <div className="pl-8 py-2 text-sm text-zinc-500 italic">
-                      {t?.('noUpdatesFound') || 'No recent updates found in database. Click "Check API" to fetch live data.'}
+                      {t?.('noUpdatesFound') || 'No updates in the last 24 hours. Archive below keeps previous releases.'}
                     </div>
                   ) : (
-                    toolReleases.map((release) => {
+                    latestReleases.map((release) => {
                       const isNew = lastChecked && new Date() - new Date(release.date) < 60000;
                       return (
                         <div
@@ -289,6 +329,37 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
                     })
                   )}
                 </div>
+
+                {archivedReleases.length > 0 && (
+                  <div className="mt-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Archive className="w-4 h-4 text-zinc-500" />
+                      <h4 className="text-sm font-semibold text-white m-0">
+                        {t?.('releaseArchive') || 'Release archive'}
+                      </h4>
+                    </div>
+                    <p className="text-xs text-zinc-500 mb-3">
+                      {t?.('archiveHelper') || 'Older releases stay below so you never lose context.'}
+                    </p>
+                    <div className="space-y-3">
+                      {archivedReleases.map((release) => (
+                        <div
+                          key={`${release.product}-${release.date}-archive`}
+                          className="rounded-xl border border-zinc-800/80 bg-zinc-900/60 px-4 py-3 shadow-inner shadow-black/30"
+                        >
+                          <div className="flex items-center gap-2 mb-1 text-xs text-zinc-500">
+                            <span className="font-semibold text-zinc-200 text-sm">
+                              {release.title || release.product || release.name || 'Release'}
+                            </span>
+                            {release.version && <span>• v{release.version}</span>}
+                            {release.date && <span>• {new Date(release.date).toLocaleDateString()}</span>}
+                          </div>
+                          <p className="text-sm text-zinc-400 m-0">{summarizeRelease(release)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
