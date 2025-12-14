@@ -1367,21 +1367,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-[#050816] via-[#0b1024] to-[#120920] text-zinc-300 font-sans selection:bg-indigo-500/30 flex flex-col overflow-hidden">
-      <svg className="absolute pointer-events-none opacity-0" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="liquid-glass-warp">
-            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="warpMap" />
-            <feDisplacementMap
-              in="SourceGraphic"
-              in2="warpMap"
-              scale="18"
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        </defs>
-      </svg>
-
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-32 -left-32 h-80 w-80 rounded-full bg-indigo-600/20 blur-[120px]" />
         <div className="absolute top-10 right-10 h-72 w-72 rounded-full bg-fuchsia-500/15 blur-[120px]" />
