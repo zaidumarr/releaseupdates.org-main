@@ -30,7 +30,7 @@ export const SEED_RELEASES = [
       'Artifacts V2: Edit code directly in the preview pane.',
     ],
     tags: ['AI', 'LLM'],
-    url: '#',
+    url: 'https://www.anthropic.com/news',
   },
   {
     provider: 'Google',
@@ -78,7 +78,7 @@ export const SEED_RELEASES = [
       'Visual search for fashion items.',
     ],
     tags: ['Search', 'Commerce'],
-    url: '#',
+    url: 'https://www.perplexity.ai',
   },
   {
     provider: 'Salesforce',

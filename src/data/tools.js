@@ -339,6 +339,17 @@ const DEFAULT_PLATFORMS = ['Web'];
 const DEFAULT_PRICING = 'Tiered plans';
 const DEFAULT_VERSION = 'Latest';
 
+const deriveLogoUrl = (tool) => {
+  if (tool.logoUrl) return tool.logoUrl;
+  if (!tool.website) return null;
+  try {
+    const host = new URL(tool.website).hostname;
+    return `https://logo.clearbit.com/${host}`;
+  } catch (error) {
+    return null;
+  }
+};
+
 const inferPlatforms = (tool) => {
   if (tool.platforms) return tool.platforms;
   const platforms = new Set(DEFAULT_PLATFORMS);
@@ -389,5 +400,6 @@ export const TOOLS_CATALOG = BASE_TOOLS.map((tool) => ({
   version: DEFAULT_VERSION,
   pricing: DEFAULT_PRICING,
   platforms: inferPlatforms(tool),
+  logoUrl: deriveLogoUrl(tool),
   ...tool,
 }));
