@@ -35,7 +35,7 @@ export const TrendingRow = ({ tool, rank, onClick, t }) => {
   return (
     <div
       onClick={onClick}
-      className="group relative flex items-center justify-between p-4 liquid-glass-card liquid-glass-filter hover:border-white/20 transition-all cursor-pointer first:rounded-t-xl last:rounded-b-xl last:border-b-0"
+      className="group relative flex items-center justify-between p-4 bg-zinc-900/40 hover:bg-zinc-800/60 border-b border-zinc-800/50 hover:border-zinc-700 transition-all cursor-pointer first:rounded-t-xl last:rounded-b-xl last:border-b-0"
     >
       <div className="flex items-center gap-4 flex-1 min-w-0">
         <span className={`text-2xl font-bold w-8 text-center shrink-0 ${rankColor}`}>{rank}</span>

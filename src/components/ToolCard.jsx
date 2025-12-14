@@ -49,7 +49,7 @@ export const ToolCard = ({ tool, onClick, categoryLabel, t, language, userCount 
   return (
     <div
       onClick={onClick}
-      className="group liquid-glass-card liquid-glass-filter hover:border-white/20 rounded-2xl p-4 transition-all cursor-pointer flex flex-col h-full shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
+      className="group bg-zinc-900/40 hover:bg-zinc-900 border border-indigo-500/10 hover:border-indigo-400/30 rounded-xl p-4 transition-all cursor-pointer flex flex-col h-full shadow-[0_8px_30px_rgba(0,0,0,0.35)]"
     >
       <div className="flex justify-between items-start mb-3">
         <div className="flex items-center gap-3">

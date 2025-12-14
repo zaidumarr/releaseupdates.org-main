@@ -133,7 +133,7 @@ export const DetailModal = ({ item, type, onClose, allReleases, onFetchUpdate, t
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl liquid-glass-card liquid-glass-filter rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex-1 overflow-y-auto p-6 md:p-8 scrollbar-thin scrollbar-thumb-zinc-800">
