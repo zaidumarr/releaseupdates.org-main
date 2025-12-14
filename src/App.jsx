@@ -1361,7 +1361,12 @@ export default function App() {
             <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-500/20">
               <Zap className="w-5 h-5 text-white fill-current" />
             </div>
-            <span className="font-bold text-white tracking-tight hidden sm:block">ReleaseHub</span>
+            <div className="relative hidden sm:block">
+              <span className="logo-shine text-lg font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-white to-fuchsia-300">
+                Release Updates
+              </span>
+              <span className="pointer-events-none absolute inset-x-0 -bottom-1 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent blur-sm opacity-80" />
+            </div>
           </div>
         </div>
 

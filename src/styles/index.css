@@ -82,6 +82,12 @@
     width: max-content;
     animation: ticker 25s linear infinite;
   }
+
+  .logo-shine {
+    background-size: 200% 100%;
+    animation: shine 6s linear infinite;
+    filter: drop-shadow(0 0 14px rgba(99, 102, 241, 0.35));
+  }
 }
 
 @keyframes fade-in {
@@ -121,5 +127,17 @@
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
