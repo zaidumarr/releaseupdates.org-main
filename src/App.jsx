@@ -60,6 +60,8 @@ const LANGUAGES = [
   { code: 'ja', label: '日本語' },
 ];
 
+const TOOLS_PAGE_SIZE = 20;
+
 const TRANSLATIONS = {
   en: {
     releaseDashboard: 'Release Dashboard',
@@ -660,6 +662,7 @@ export default function App() {
   const [stackVendors, setStackVendors] = useState(new Set());
   const [sentimentVotes, setSentimentVotes] = useState({});
   const [localUsers, setLocalUsers] = useState([]);
+  const [toolPage, setToolPage] = useState(1);
 
   useEffect(() => {
     if (mobileMenuOpen) {
@@ -1296,6 +1299,26 @@ export default function App() {
       }),
     [searchQuery, activeFilter, stackVendors],
   );
+
+  const totalToolPages = useMemo(
+    () => Math.max(1, Math.ceil(filteredTools.length / TOOLS_PAGE_SIZE)),
+    [filteredTools.length],
+  );
+
+  useEffect(() => {
+    if (toolPage > totalToolPages) {
+      setToolPage(totalToolPages || 1);
+    }
+  }, [toolPage, totalToolPages]);
+
+  useEffect(() => {
+    setToolPage(1);
+  }, [searchQuery, activeFilter, activeView]);
+
+  const pagedTools = useMemo(() => {
+    const start = (toolPage - 1) * TOOLS_PAGE_SIZE;
+    return filteredTools.slice(start, start + TOOLS_PAGE_SIZE);
+  }, [filteredTools, toolPage]);
 
   const trendingAll = trendingTools.length ? trendingTools : localTrendingAll;
   const trendingDisplay = trendingAll.slice(0, 10);
@@ -2014,18 +2037,89 @@ export default function App() {
                   <p className="text-zinc-500">{t('noTools')}</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filteredTools.map((tool) => (
-                    <ToolCard
-                      key={tool.id}
-                      tool={tool}
-                      t={t}
-                      userCount={getToolUsers(tool)}
-                      categoryLabel={getCategoryLabel(tool.category)}
-                      onClick={() => openDetail(tool, 'tool')}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {pagedTools.map((tool) => (
+                      <ToolCard
+                        key={tool.id}
+                        tool={tool}
+                        t={t}
+                        userCount={getToolUsers(tool)}
+                        categoryLabel={getCategoryLabel(tool.category)}
+                        onClick={() => openDetail(tool, 'tool')}
+                      />
+                    ))}
+                  </div>
+                  <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
+                    <div>
+                      Showing {(toolPage - 1) * TOOLS_PAGE_SIZE + 1}–
+                      {Math.min(toolPage * TOOLS_PAGE_SIZE, filteredTools.length)} of {filteredTools.length}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setToolPage((page) => Math.max(1, page - 1))}
+                        disabled={toolPage === 1}
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                          toolPage === 1
+                            ? 'border-zinc-800 text-zinc-700 cursor-not-allowed'
+                            : 'border-zinc-700 text-white hover:border-indigo-400'
+                        }`}
+                      >
+                        Prev
+                      </button>
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: totalToolPages }).map((_, index) => {
+                          const page = index + 1;
+                          const active = page === toolPage;
+                          // Only show first, last, current, and neighbors to avoid overflow when many pages
+                          if (
+                            page === 1 ||
+                            page === totalToolPages ||
+                            Math.abs(page - toolPage) <= 1 ||
+                            (toolPage === 1 && page <= 3) ||
+                            (toolPage === totalToolPages && page >= totalToolPages - 2)
+                          ) {
+                            return (
+                              <button
+                                key={page}
+                                onClick={() => setToolPage(page)}
+                                className={`px-2.5 py-1 rounded-md text-xs font-semibold border transition-colors ${
+                                  active
+                                    ? 'bg-white text-black border-white'
+                                    : 'border-zinc-800 text-zinc-400 hover:border-indigo-400 hover:text-white'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            );
+                          }
+                          if (
+                            (page === 2 && toolPage > 3) ||
+                            (page === totalToolPages - 1 && toolPage < totalToolPages - 2)
+                          ) {
+                            return (
+                              <span key={`ellipsis-${page}`} className="px-2 text-zinc-600">
+                                …
+                              </span>
+                            );
+                          }
+                          return null;
+                        })}
+                      </div>
+                      <button
+                        onClick={() => setToolPage((page) => Math.min(totalToolPages, page + 1))}
+                        disabled={toolPage === totalToolPages}
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                          toolPage === totalToolPages
+                            ? 'border-zinc-800 text-zinc-700 cursor-not-allowed'
+                            : 'border-zinc-700 text-white hover:border-indigo-400'
+                        }`}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
             </>
           )}
