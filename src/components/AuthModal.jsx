@@ -61,7 +61,7 @@ export const AuthModal = ({ isOpen, onClose, mode, setMode, isLocalMode = false,
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
       <div
-        className="w-full max-w-md bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl p-8 animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-md liquid-glass-card liquid-glass-filter rounded-2xl shadow-2xl p-8 animate-in fade-in zoom-in-95 duration-200"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-6">

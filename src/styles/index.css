@@ -125,6 +125,10 @@
     mix-blend-mode: screen;
     pointer-events: none;
   }
+
+  .liquid-glass-filter {
+    filter: url(#liquid-glass-warp);
+  }
 }
 
 @keyframes fade-in {

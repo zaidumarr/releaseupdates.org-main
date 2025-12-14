@@ -5,8 +5,7 @@ import { ProviderIcon } from './ProviderIcon.jsx';
 export const ReleaseCard = ({ release, onClick }) => (
   <div
     onClick={onClick}
-    className="group relative liquid-glass-card hover:border-white/20 p-5 transition-all cursor-pointer duration-200"
-    style={{ filter: 'url(#liquid-glass-warp)' }}
+    className="group relative liquid-glass-card liquid-glass-filter hover:border-white/20 p-5 transition-all cursor-pointer duration-200"
   >
     <div className="flex justify-between items-start mb-3">
       <div className="flex items-center gap-3">
