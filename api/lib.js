@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const DEFAULT_CATEGORY = 'IT / Dev / AI tools';
-const CACHE_TTL_MS = 60 * 1000; // refresh roughly every minute
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // refresh at most once per day
 const GEMINI_TIMEOUT_MS = 4000;
 
 const FALLBACK_TOOLS = [

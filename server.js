@@ -195,7 +195,8 @@ app.post('/api/translate', async (req, res) => {
   }
 });
 
-cron.schedule('* * * * *', async () => {
+// Run once daily at 00:00 UTC to refresh trending tools
+cron.schedule('0 0 * * *', async () => {
   try {
     const { tools, source } = await fetchTrendingFromGemini();
     cachedTools = tools;
